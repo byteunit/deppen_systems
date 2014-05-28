@@ -1,0 +1,93 @@
+\documentclass[
+            a4paper
+            ]{scrartcl}%article
+
+%\usepackage[biber]{assignment}
+%\addbibresource{references.bib}
+\usepackage{assignment}
+
+
+\title{Praktisches Übungsbeispiel SS2014}
+\subtitle{Zuverlässigkeitsmodellierung}
+\rohead{Übungsbeispiel SS14}
+\subject{VU Dependable Systems 182.712}
+
+\author{
+ \authorname{Markus Kessler} \\
+ \studentnumber{1225380} \\
+ \curriculum{033 535}\\
+ \email{e1225380@student.tuwien.ac.at}\\\\
+ \authorname{Mathias Lechner} \\
+ \studentnumber{1225134} \\
+ \curriculum{033 535}\\
+ \email{e1225134@student.tuwien.ac.at}\\\\
+ \authorname{Martin Wührer} \\
+ \studentnumber{1225177} \\
+ \curriculum{033 535}\\
+ \email{e1225177@student.tuwien.ac.at}
+}
+
+\lohead{Kessler, Lechner, Wührer}
+
+\begin{document}
+
+\renewcommand*{\Frefeqname}{Gleichung}
+
+\maketitle
+
+\newpage
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+    \centering
+    \scalebox{.85}{
+    \begin{tikzpicture}
+        \tikzstyle{node} = [top color=white, bottom color=blue!30, 
+                                draw=blue!50!black!100, drop shadow]
+        \tikzstyle{switch} = [top color=white, bottom color=red!30, 
+                                draw=red!50!black!100, drop shadow]
+        \node[switch](sw1){Switch};
+        \node[node] (nd1)   [above left=of sw1]{Node 1};
+        \node[node] (nd2)   [above=of sw1]{Node 2};
+        \node[node] (nd3)   [above right=of sw1]{Node 3};
+
+        \path (sw1) edge (nd1);
+        \path (sw1) edge (nd2);
+        \path (sw1) edge (nd3);
+    \end{tikzpicture}}
+    \caption{Einfache Variante}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\linewidth}
+    \scalebox{.85}{
+    \begin{tikzpicture}
+        \tikzstyle{node} = [top color=white, bottom color=blue!30, 
+                                draw=blue!50!black!100, drop shadow]
+        \tikzstyle{backnode} = [top color=white, bottom color=green!30, 
+                                draw=blue!50!black!100, drop shadow]
+        \tikzstyle{switch} = [top color=white, bottom color=red!30, 
+                                draw=red!50!black!100, drop shadow]
+
+        \node[switch](sw1){Switch 1};
+        \node[switch](sw2)  [right=of sw1]{Switch 2};
+        \node[node] (nd1)   [above left=of sw1]{Node 1};
+        \node[node] (nd2)   [above=of sw1]{Node 2};
+        \node[node] (nd3)   [above=of sw2]{Node 3};
+        \node[backnode] (nd4)   [above right=of sw2]{Node 4};
+
+        \path (sw1) edge (nd1);
+        \path (sw1) edge (nd2);
+        \path (sw1) edge (nd3);
+        \path (sw1) edge (nd4);
+
+        \path (sw2) edge (nd1);
+        \path (sw2) edge (nd2);
+        \path (sw2) edge (nd3);
+        \path (sw2) edge (nd4);
+    \end{tikzpicture}}
+    \caption{Fehlertolerant erweiterte Variante}
+    \end{subfigure}
+    \caption{Einfache und fehlertolerant erweiterte Variante des Computersystems}
+\end{figure}
+
+\end{document}
