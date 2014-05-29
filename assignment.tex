@@ -5,7 +5,7 @@
 %\usepackage[biber]{assignment}
 %\addbibresource{references.bib}
 \usepackage{assignment}
-
+\usepackage{amsmath}
 
 \title{Praktisches Übungsbeispiel SS2014}
 \subtitle{Zuverlässigkeitsmodellierung}
@@ -238,8 +238,29 @@ Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
 Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
 \section{Diskussion}
+\subsection{Kostenrechnung}
+Aus der Simulation mit \emph{SHARPE} haben wir die beiden Availability Werte $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System erhalten.\\
+Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
+\begin{equation}
+C_s(k) = \Omega \cdot \alpha_s + (1-\alpha_s)\Omega \cdot k
+\end{equation}
 
+wobei $k \cdot \Omega$ die Ausfallkosten des Systems sind ($k \in \mathbb{N}^+$)\\$k$ stellt das Verhältnis zwischen Laufender Kosten und Ausfallkosten des einfachen Systems dar.\\
+Die Kosten des Redundanten Systems ergeben sich mit: 
+\begin{equation}
+C_r(k) = \Omega \cdot 2,5 \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k
+\end{equation}
 
+Um das Verhältnis $k$ zu bestimmen, ab dem sich der Betrieb des Redundanten Systems auszahlt, muss der Schnittpunkt $k_x$ bestimmt werden:
+\begin{equation}
+\begin{split}
+C_s(k_x) = C_r(k_x) \\ &
+ \Leftrightarrow
+\Omega \cdot \alpha_s + (1-\alpha_s)\Omega \cdot k_x = \Omega \cdot 2,5 \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k_x \\ & \Leftrightarrow
+k_x \cdot (1 - \alpha_s - 1 + \alpha_r) = 2,5 \alpha_r - \alpha_s \\ & \Leftrightarrow
+k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
+\end{split}
+\end{equation}
 \section{Fazit}
 
 \appendix
