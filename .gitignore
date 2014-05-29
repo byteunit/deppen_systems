@@ -7,4 +7,5 @@ assignment.out
 assignment.fdb_latexmk
 assignment.synctex.gz
 assignment.pdf
+assignment.toc
 *.swp
