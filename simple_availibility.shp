@@ -1,0 +1,23 @@
+bind
+* Failure rate of computer (node)
+lambda_r 24/10000
+
+* Failure rate of network switch
+lambda_n 48/100000
+
+* Repair rate of node and switch is equal
+mu 1/100
+end
+
+markov SYS
+1 2 3*lambda_r+lambda_n
+2 1 mu
+end
+
+* Start probability
+1 1.0
+end
+
+* availability
+expr prob(SYS,1)
+end 
