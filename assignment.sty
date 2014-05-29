@@ -65,9 +65,15 @@
     breakindent       = 2ex,
     showstringspaces=false}
 
-\lstloadlanguages{% Check Dokumentation for further languages ...
-    C
- }
+\lstset{morekeywords={
+        bind, end},%
+        emph={expr, eval, cdf},
+        emphstyle={\color{blue!70!black}\bfseries},
+        alsoletter=.,%
+        sensitive=false,%
+        escapeinside={(*@}{@*)},
+        morecomment=[l]{*\ },%
+    } % just to better see the listings
 
 \RequirePackage[pdfencoding=auto,pdfusetitle,
     hyperfootnotes,
