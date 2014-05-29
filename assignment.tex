@@ -322,6 +322,32 @@ Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 \subsection{Availability}
 
 \section{Diskussion}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+    \begin{axis}[
+	    height=5.2cm, width=12cm,
+		axis lines=center,
+		axis on top=true,
+		domain=0:100,
+    	xmin=0, xmax=100,
+    	xlabel=k,
+        ymin=0, ymax=100,
+        ylabel=Kosten,
+        x label style={at={(axis description cs:1.05,0.05)},anchor=north},
+        y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
+        %ylabel=Number of failed banks
+        ] % use TeX as calculator: 
+    \addplot +[mark=none]{30+x};
+    \addlegendentry{Funktion 1}
+    \addplot +[mark=none]{2*x};
+    \addlegendentry{Funktion 2}
+    \draw[green] ({axis cs:60,0}|-{rel axis cs:0,1}) -- ({axis cs:60,0}|-{rel axis cs:0,0});
+    \end{axis} 
+\end{tikzpicture}
+\caption{Vergleich der Kostenfunktionen mit Schnittpunkt $K_x$}
+\label{fig:mttf_result}
+\end{figure}
 \subsection{Kostenrechnung}
 Aus der Simulation mit \emph{SHARPE} haben wir die beiden Availability Werte $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System erhalten.\\
 Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
@@ -352,9 +378,13 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \subsection{MTTF}
 \subsubsection{MTTF Ohne Redundanz}
 \lstinputlisting{simple_mttf.shp}
-\subsubsection{MTTF Mit Redundanz inklusive Reparatur}
+\subsubsection{MTTF mit Redundanz inklusive Reparatur}
 \lstinputlisting{redundancy_mttf.shp}
-\subsubsection{MTTF Mit Redundanz ohne Reparatur}
+\subsubsection{MTTF mit Redundanz ohne Reparatur}
 \lstinputlisting{redundancy_without_repair_mttf.shp}
-
+\subsection{Availability}
+\subsubsection{Availability Ohne Redundanz}
+\lstinputlisting{simple_availibility.shp}
+\subsubsection{Availability mit Redundanz}
+\lstinputlisting{redundant_availability.shp}
 \end{document}
