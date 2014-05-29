@@ -7,7 +7,7 @@ lamda_r 24/10000
 lamda_n 48/100000
 
 * Repair rate of node and switch is equal
-mu 1/100
+mu 24/100
 
 end
 
