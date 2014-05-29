@@ -338,6 +338,12 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
 \end{figure}
 Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
+\subsection{Availability}
+Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands 1 berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
+Mit den gegebenen Werte ergibt sich: $\alpha_s = 96,899\%$\\
+
+Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit sich in einem der Zustände $\lbrace 1, 2, 3, 4 \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand 5 (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden.\\
+In unserem Fall ergibt das: $\alpha_r = 99,887\%$\\
 \section{Diskussion}
 TODO:
 \subsection{Kostenrechnung}
@@ -393,6 +399,8 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \label{fig:mttf_result}
 \end{figure}
 
+Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
+\[k_x = \frac{2,5 \cdot 99,887\% - 96,899\%}{99,887\% - 96,899\%} = 51,144 \dots \approx 52 \]
 \section{Fazit}
 \newpage
 \appendix
