@@ -11,8 +11,10 @@
 % ------------------------------------------------------------ %
 % -------------------- Math functions ------------------------ %
 % ------------------------------------------------------------ %
-\pgfmathsetmacro{\alphas}{0.96} 	%Availability value simple
-\pgfmathsetmacro{\alphar}{0.99}	%Availability value redundant
+\newcommand{\printpercent}[1]{\pgfmathparse{100*#1}\pgfmathprintnumber[fixed,
+precision=3]{\pgfmathresult}\%}
+\pgfmathsetmacro{\alphas}{0.96899}  %Availability value simple
+\pgfmathsetmacro{\alphar}{0.99887}  %Availability value redundant
 \pgfmathsetmacro{\Betriebskosten}{10}%Betriebskosten des einfachen Systems
 \pgfmathdeclarefunction{kst1}{3}{ %kst1(Omega, alpha_s, k)
 	\pgfmathparse{(#1*#2)+((1-#2)*#1*#3)}
@@ -352,10 +354,11 @@ TODO:
 Aus der Simulation mit \emph{SHARPE} haben wir die beiden Availability Werte $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System erhalten.\\
 Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
 \begin{equation}
-C_s(k) = \Omega \cdot \alpha_s + (1-\alpha_s)\Omega \cdot k
+C_s(k) = \Omega \cdot \alpha_s + (1-\alpha_s)\cdot \Omega \cdot k
 \end{equation}
 
-wobei $k \cdot \Omega$ die Ausfallkosten des Systems sind ($k \in \mathbb{N}^+$)\\$k$ stellt das Verhältnis zwischen Laufender Kosten und Ausfallkosten des einfachen Systems dar.\\
+wobei $k \cdot \Omega$ die Ausfallkosten des Systems sind ($k \in
+\mathbb{N}^+$).\\$k$ stellt das Verhältnis zwischen Laufender Kosten und Ausfallkosten des einfachen Systems dar.\\
 Die Kosten des Redundanten Systems ergeben sich mit: 
 \begin{equation}
 C_r(k) = \Omega \cdot 2,5 \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k
@@ -401,8 +404,19 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \label{fig:mttf_result}
 \end{figure}
 
+
+%Enable fixpoint-arithmetic only for this short calculation:
+\pgfkeys{/pgf/fpu=true}
+\pgfkeys{/pgf/number format,use comma,fixed,precision=5}
+
 Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
-\[k_x = \frac{2,5 \cdot 99,887\% - 96,899\%}{99,887\% - 96,899\%} = 51,144 \dots \approx 52 \]
+\[k_x = \frac{2,5 \cdot \printpercent{\alphar} -
+\printpercent{\alphas}}{\printpercent{\alphar} - \printpercent{\alphas}} =
+\pgfmathprintnumber[fixed, precision=3]{\punktkx} \approx
+\pgfmathprintnumber[fixed, precision=0]{\punktkx} \]
+
+\pgfkeys{/pgf/fpu=false}
+
 \section{Fazit}
 \newpage
 \appendix
