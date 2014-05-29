@@ -1,0 +1,46 @@
+echo MTTF for System with redundany
+bind
+* Failure rate of computer (node)
+lamda_r 24/10000
+
+* Failure rate of network switch
+lamda_n 48/100000
+
+* Repair rate of node and switch is equal
+mu 1/100
+
+end
+
+***** graph desrciption
+markov SYS
+*** Failure of single nodes
+1 2 4*lamda_r
+1 3 2*lamda_n
+2 4 2*lamda_n
+3 4 4*lamda_r
+
+*** Failure of system:
+2 5 3*lamda_r
+3 5 lamda_n
+4 5 3*lamda_r+lamda_n
+
+*** Repair rates:
+2 1 mu
+3 1 mu
+4 1 mu
+
+end
+* starting probability
+1 1.0
+end
+
+* evaluation
+cdf(SYS)
+
+* Start End Inc
+eval(SYS) 0 1800 18
+
+* After 2 month
+expr value(60;SYS)
+expr mean(SYS)
+end
