@@ -211,6 +211,88 @@ Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus.
 Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
 (\textbf{c}) oder (\textbf{b}) zu kommen.
 
+\subsection{Availability}
+\subsubsection{Einfache Variante}
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.48\linewidth}
+        \centering
+        \begin{tikzpicture}[>=latex]
+            \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                            draw=blue!50!black!100, drop shadow]
+            \tikzstyle{bad} = [top color=red!30]
+
+            \node[markov,circle split,label=below left:{\textbf{a}}] (1) {$3/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\textbf{b}}] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\textbf{c}}] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
+            \draw[->] (1) to node[sloped,above]{$3\lambda_R$}(2);
+            \draw[->] (1) to node[sloped,above]{$\lambda_N$}(3);
+            \draw[->, green!70!black] (3) to[bend right=45] node[sloped,above]{$\mu_N$}(1);
+            \draw[->, green!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R$}(1);
+        \end{tikzpicture}
+        \caption{\textbf{Zustand a}: Funktionierend, \\
+            \textbf{Zustand b}: Rechnerausfall, \\
+            \textbf{Zustand c}: Netzwerkausfall}
+        \label{fig:states_simple_avail}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\linewidth}
+        \centering
+            \begin{tikzpicture}[>=latex]
+                \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                                draw=blue!50!black!100, drop shadow]
+                \tikzstyle{bad} = [top color=red!30]
+
+                \node[markov,circle,label=below right:{\textbf{a}}] (1) {alive};
+                \node[markov,bad,circle,label=below right:{\textbf{b}}] (2)
+                [right=5 of 1]{dead};
+                \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
+                \draw[->, green!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R=\mu_N$}(1);
+            \end{tikzpicture}
+            \caption{Vereinfachte Variante von \Fref{fig:states_simple_avail} \\
+                \textbf{Zustand a}: Funktionierend, \\
+                \textbf{Zustand b}: nicht Funktionierend}
+            \label{fig:states_simple_avail_simply}
+    \end{subfigure}
+    \caption{Zustände Einfache Variante Availability}
+    \label{fig:states_simple_avail_comb}
+\end{figure}
+Wir übernehmen für die Berechnung der Verfügbarkeit das vorherige Modell,
+erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
+(siehe \Fref{fig:states_simple_avail_comb}).
+
+\subsubsection{Redundante Variante}
+\begin{figure}
+    \centering
+        \begin{tikzpicture}[>=latex]
+            \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                            draw=blue!50!black!100, drop shadow]
+            \tikzstyle{bad} = [top color=red!30]
+
+            \node[markov,circle split,label=below left:{\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
+            \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
+            \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
+            \draw[->] (41) to[bend right=-45] node[sloped,above]{$\mu_N$}(42);
+            \draw[->] (41) to node[sloped,above]{$4\lambda_R$}(31);
+            \draw[->] (31) to node[sloped,above]{$\mu_N$} (42);
+            \draw[->] (32) to node[sloped,above]{$2\lambda_N$}(31);
+            \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
+            \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
+            \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
+            \draw[->,green!70!black] (d) to[bend right=108] node[sloped,above]{$\mu_N=\mu_R$}(42);
+        \end{tikzpicture}
+    \caption{Zustände redundante Variante Availability}
+    \label{fig:states_redundant_avail}
+\end{figure}
+Bei der redundanten Variante fügen wir ebenfalls ein Übergang von \enquote{dead}
+zum Startzustand ein. Für die Berechnung der Verfügbarkeit definieren wir, dass
+das System nur in den blauen Zuständen verfügbar ist (siehe
+\Fref{fig:states_redundant_avail}).
+
 \section{Ergebnisse}
 \begin{figure}
 \centering
@@ -262,14 +344,15 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \end{split}
 \end{equation}
 \section{Fazit}
-
+\newpage
 \appendix
 \section{Sharpe-Quellcode}
-\subsection{MTTF Ohne Redundanz}
+\subsection{MTTF}
+\subsubsection{MTTF Ohne Redundanz}
 \lstinputlisting{simple_mttf.shp}
-\subsection{MTTF Mit Redundanz inklusive Reparatur}
+\subsubsection{MTTF Mit Redundanz inklusive Reparatur}
 \lstinputlisting{redundancy_mttf.shp}
-\subsection{MTTF Mit Redundanz ohne Reparatur}
+\subsubsection{MTTF Mit Redundanz ohne Reparatur}
 \lstinputlisting{redundancy_without_repair_mttf.shp}
 
 \end{document}
