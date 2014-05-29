@@ -7,7 +7,6 @@
 \usepackage{assignment}
 
 
-
 % ------------------------------------------------------------ %
 % -------------------- Math functions ------------------------ %
 % ------------------------------------------------------------ %
@@ -169,8 +168,8 @@ The computation of the results is done with \emph{SHARPE}.
                 \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
             \end{tikzpicture}
             \caption{Vereinfachte Variante von \Fref{fig:states_simple_mttf} \\
-                \textbf{Zustand a}: Funktionierend, \\
-                \textbf{Zustand b}: nicht Funktionierend}
+                \textbf{Zustand a}: System funktioniert, \\
+                \textbf{Zustand b}: System funktioniert nicht}
             \label{fig:states_simple_mttf_simply}
     \end{subfigure}
     \caption{Zustände Einfache Variante MTTF}
@@ -185,7 +184,7 @@ Wir definieren für dieses Modell folgende Zustände (siehe \Fref{fig:states_sim
 \end{enumerate}
 
 Da es keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt, kann das
-Modell vereinfacht werden. Wir sprechen nur noch von "alive" und "dead". (siehe
+Modell vereinfacht werden. Wir sprechen nur noch von \enquote{alive} und \enquote{dead}. (siehe
 \Fref{fig:states_simple_mttf_simply})
 Die Wahrscheinlichkeiten werden addiert.
 
@@ -325,6 +324,10 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
         axis on top=true,
         domain=0:1,
         legend style={at={(axis cs:1800,0.2)},anchor=south east},
+        xlabel=Tage,
+        ylabel=Ausfallswahrscheinlichkeit,
+        x label style={at={(axis description cs:1.07,0.07)},anchor=north},
+        y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
         %ylabel=Number of failed banks
         ] % use TeX as calculator: 
     \addplot[blue,thick,domain=0:1800,samples=100] table {values_simple_mttf.dat}; 
@@ -344,7 +347,7 @@ Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
 Mit den gegebenen Werte ergibt sich: $\alpha_s = 96,899\%$\\
 
-Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
+Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
 In unserem Fall ergibt das: $\alpha_r = 99,887\%$\\
 \section{Diskussion}
 TODO:
