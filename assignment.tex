@@ -211,6 +211,54 @@ Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus.
 Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
 (\textbf{c}) oder (\textbf{b}) zu kommen.
 
+\subsection{Availability}
+\subsubsection{Einfache Variante}
+Wir übernehmen für die Berechnung der Verfügbarkeit das vorherige Modell, erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}.\\
+\begin{figure}
+    \centering
+		\begin{tikzpicture}[>=latex]
+	        \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+	                        draw=blue!50!black!100, drop shadow]
+	        \tikzstyle{bad} = [top color=red!30]
+	
+	        \node[markov,circle,label=below right:{\textbf{a}}] (1) {alive};
+	        \node[markov,bad,circle,label=below right:{\textbf{b}}] (2)
+	        [right=5 of 1]{dead};
+	        \draw[->] (1) to[bend left=20] node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
+	        \draw[->] (2) to[bend left=20] node[sloped,above]{$\mu$}(1);
+	    \end{tikzpicture}
+    \caption{Zustände einfache Variante Availability}
+    \label{fig:states_simple_availability}
+\end{figure}
+\subsubsection{Redundante Variante}
+Bei der redundanten Variante fügen wir ebenfalls ein Übergang von \enquote{dead} zum Startzustand ein. Für die Berechnung der Verfügbarkeit definieren wir, dass das System nur in den blauen Zuständen verfügbar ist.\\
+\begin{figure}
+    \centering
+        \begin{tikzpicture}[>=latex]
+            \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                            draw=blue!50!black!100, drop shadow]
+            \tikzstyle{bad} = [top color=red!30]
+
+            \node[markov,circle split,label=below left:{\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
+            \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
+            \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
+            \draw[->] (41) to[bend right=-45] node[sloped,above]{$\mu_N$}(42);
+            \draw[->] (41) to node[sloped,above]{$4\lambda_R$}(31);
+            \draw[->] (31) to node[sloped,above]{$\mu_N$} (42);
+            \draw[->] (32) to node[sloped,above]{$2\lambda_N$}(31);
+            \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
+            \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
+            \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
+            \draw[->] (d)  to[bend left=100] node[sloped,above]{$\mu$} (42);
+        \end{tikzpicture}
+    \caption{Zustände redundante Variante Availability}
+    \label{fig:states_redundancy_availability}
+\end{figure}
 \section{Ergebnisse}
 \begin{figure}
 \centering
