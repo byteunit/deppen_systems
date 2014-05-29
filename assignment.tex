@@ -46,7 +46,8 @@
         \tikzstyle{node} = [top color=white, bottom color=blue!30, 
                                 draw=blue!50!black!100, drop shadow]
         \tikzstyle{switch} = [top color=white, bottom color=red!30, 
-                                draw=red!50!black!100, drop shadow]
+                                draw=red!50!black!100, drop shadow,
+                                rounded corners=5pt]
         \node[switch](sw1){Switch};
         \node[node] (nd1)   [above left=of sw1]{Node 1};
         \node[node] (nd2)   [above=of sw1]{Node 2};
@@ -63,17 +64,17 @@
     \begin{tikzpicture}
         \tikzstyle{node} = [top color=white, bottom color=blue!30, 
                                 draw=blue!50!black!100, drop shadow]
-        \tikzstyle{backnode} = [top color=white, bottom color=green!30, 
-                                draw=blue!50!black!100, drop shadow]
+        \tikzstyle{backup} = [bottom color=green!30]
         \tikzstyle{switch} = [top color=white, bottom color=red!30, 
-                                draw=red!50!black!100, drop shadow]
+                                draw=red!50!black!100, drop shadow,
+                                rounded corners=5pt]
 
         \node[switch](sw1){Switch 1};
-        \node[switch](sw2)  [right=of sw1]{Switch 2};
+        \node[switch,backup](sw2)  [right=of sw1]{Switch 2};
         \node[node] (nd1)   [above left=of sw1]{Node 1};
         \node[node] (nd2)   [above=of sw1]{Node 2};
         \node[node] (nd3)   [above=of sw2]{Node 3};
-        \node[backnode] (nd4)   [above right=of sw2]{Node 4};
+        \node[node,backup] (nd4)   [above right=of sw2]{Node 4};
 
         \path (sw1) edge (nd1);
         \path (sw1) edge (nd2);
@@ -89,5 +90,16 @@
     \end{subfigure}
     \caption{Einfache und fehlertolerant erweiterte Variante des Computersystems}
 \end{figure}
+
+\begin{tikzpicture}[>=latex]
+    \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                    draw=blue!50!black!100, drop shadow]
+    \tikzstyle{bad} = [top color=red!30]
+
+    \node[markov,circle split] (1) {$3/3$ \nodepart{lower} $1/1$};
+    \node[markov,bad,circle split] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
+    \node[markov,bad,circle split] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
+    \path[->] (1) edge node[sloped,above]{$3\lambda_R$}(2);
+\end{tikzpicture}
 
 \end{document}
