@@ -47,6 +47,7 @@ x                        y                        labela                   label
 
 \begin{abstract}
 Our task is to create a Markov chain model for simulating the failure of a computer system. The mean time to failure and the availability of a simple and a redundant version of the system are compared. Additionally a cost evaluation between the more expensive redundant system and simple system is considered.
+The computation of the results is done with \emph{SHARPE}.
 \end{abstract}
 
 \section{Executive Summary}
@@ -320,10 +321,10 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
 Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
 \subsection{Availability}
-Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands 1 berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
+Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
 Mit den gegebenen Werte ergibt sich: $\alpha_s = 96,899\%$\\
 
-Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit sich in einem der Zustände $\lbrace 1, 2, 3, 4 \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand 5 (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden.\\
+Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
 In unserem Fall ergibt das: $\alpha_r = 99,887\%$\\
 \section{Diskussion}
 \begin{figure}
