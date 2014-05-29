@@ -320,8 +320,32 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
 Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
 \section{Diskussion}
-
-
+\begin{figure}
+\centering
+\begin{tikzpicture}
+    \begin{axis}[
+	    height=5.2cm, width=12cm,
+		axis lines=center,
+		axis on top=true,
+		domain=0:100,
+    	xmin=0, xmax=100,
+    	xlabel=k,
+        ymin=0, ymax=100,
+        ylabel=Kosten,
+        x label style={at={(axis description cs:1.05,0.05)},anchor=north},
+        y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
+        %ylabel=Number of failed banks
+        ] % use TeX as calculator: 
+    \addplot +[mark=none]{30+x};
+    \addlegendentry{Funktion 1}
+    \addplot +[mark=none]{2*x};
+    \addlegendentry{Funktion 2}
+    \draw[green] ({axis cs:60,0}|-{rel axis cs:0,1}) -- ({axis cs:60,0}|-{rel axis cs:0,0});
+    \end{axis} 
+\end{tikzpicture}
+\caption{Vergleich der Kostenfunktionen mit Schnittpunkt $K_x$}
+\label{fig:mttf_result}
+\end{figure}
 \section{Fazit}
 \newpage
 \appendix
