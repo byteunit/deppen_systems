@@ -6,6 +6,25 @@
 %\addbibresource{references.bib}
 \usepackage{assignment}
 
+
+
+% ------------------------------------------------------------ %
+% -------------------- Math functions ------------------------ %
+% ------------------------------------------------------------ %
+\pgfmathsetmacro{\alphas}{0.96} 	%Availability value simple
+\pgfmathsetmacro{\alphar}{0.99}	%Availability value redundant
+\pgfmathsetmacro{\Betriebskosten}{10}%Betriebskosten des einfachen Systems
+\pgfmathdeclarefunction{kst1}{3}{ %kst1(Omega, alpha_s, k)
+	\pgfmathparse{(#1*#2)+((1-#2)*#1*#3)}
+}
+\pgfmathdeclarefunction{kst2}{3}{ %kst2(Omega, alpha_r, k)
+	\pgfmathparse{(#1*2.5*#2)+((1-#2)*#1*#3)}
+}
+\pgfmathdeclarefunction{schnittpunkt}{2} { %schnittpunkt(alphar, alphas)
+	\pgfmathparse{(2.5*#1-#2)/(#1-#2)}
+}
+\pgfmathsetmacro{\punktkx}{schnittpunkt(\alphar, \alphas)}
+
 \title{Praktisches Übungsbeispiel SS2014}
 \subtitle{Zuverlässigkeitsmodellierung}
 %\rohead{Übungsbeispiel SS14}
@@ -320,7 +339,14 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
 \end{figure}
 Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
+\subsection{Availability}
+Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands 1 berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
+Mit den gegebenen Werte ergibt sich: $\alpha_s = 96,899\%$\\
+
+Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit sich in einem der Zustände $\lbrace 1, 2, 3, 4 \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand 5 (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden.\\
+In unserem Fall ergibt das: $\alpha_r = 99,887\%$\\
 \section{Diskussion}
+TODO:
 \subsection{Kostenrechnung}
 Aus der Simulation mit \emph{SHARPE} haben wir die beiden Availability Werte $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System erhalten.\\
 Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
@@ -344,13 +370,45 @@ k_x \cdot (1 - \alpha_s - 1 + \alpha_r) = 2,5 \alpha_r - \alpha_s \\ & \Leftrigh
 k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \end{split}
 \end{equation}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+    \begin{axis}[
+	    height=5.2cm, width=12cm,
+		axis lines=center,
+		axis on top=true,
+		domain=0:100,
+    	xmin=0, xmax=100,
+    	xlabel=k,
+        ymin=0, ymax=50,
+        ylabel=Kosten $\Omega$,
+        ytick = {0,10,...,50},
+        x label style={at={(axis description cs:1.05,0.05)},anchor=north},
+        y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
+        legend style={at={(axis cs:100, 5)},anchor=south east},
+        %ylabel=Number of failed banks
+        ] % use TeX as calculator: 
+    \addplot +[mark=none] {kst1(\Betriebskosten, \alphas, x)};
+    \addlegendentry{Kosten simple}
+    \addplot +[mark=none] {kst2(\Betriebskosten, \alphar, x)};
+    \addlegendentry{Kosten redundant}
+    \draw[green] (axis cs:\punktkx,0) -- (axis cs:\punktkx,20) node [above] {Some text};
+    \end{axis} 
+\end{tikzpicture}
+\caption{Vergleich der Kostenfunktionen mit Schnittpunkt $k_x$}
+\label{fig:mttf_result}
+\end{figure}
+
+Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
+\[k_x = \frac{2,5 \cdot 99,887\% - 96,899\%}{99,887\% - 96,899\%} = 51,144 \dots \approx 52 \]
 \section{Fazit}
 \newpage
 \appendix
 \section{Sharpe-Quellcode}
 \subsection{MTTF}
 \subsubsection{MTTF Ohne Redundanz}
-\lstinputlisting[language=shp]{simple_mttf.shp}
+\lstinputlisting{simple_mttf.shp}
 \subsubsection{MTTF mit Redundanz inklusive Reparatur}
 \lstinputlisting{redundancy_mttf.shp}
 \subsubsection{MTTF mit Redundanz ohne Reparatur}
