@@ -111,31 +111,10 @@ Our task is to create a Markov chain model for simulating the failure of a compu
 
 
 \section{Lösungsmethode}
+\subsection{MTTF}
 
-Wir definieren für dieses Modell folgende Zustände (siehe \Fref{fig:states_simple_mttf})
-\begin{enumerate}[\bfseries a.]
-    \item das System arbeitet fehlerfrei ($3/3$ | $1/1$)
-    \item ein Node ist defekt ($2/3$ | $1/1$)
-    \item ein Switch ist defekt ($3/3$ | $0/1$)
-\end{enumerate}
+\subsubsection{Einfache Variante}
 
-Da es keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt, kann das
-Modell vereinfacht werden. Wir sprechen nur noch von "alive" und "dead". (siehe
-\Fref{fig:states_simple_mttf_simply})
-Die Wahrscheinlichkeiten werden addiert.
-
-Für die redundante Variante existieren die Zustände:
-\begin{enumerate}[\bfseries a.]
-    \item das System arbeitet fehlerfrei ($4/4$ | $2/2$)
-    \item ein Node ist defekt ($3/4$ | $2/2$)
-    \item ein Swich ist defekt ($4/4$ | $1/2$)
-    \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
-    \item das System ist defekt ("dead")
-\end{enumerate}
-
-Für den Fall (4) gehen wir davon aus, dass der Techniker beide Fehler gleichzeitig beheben kann. Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus. Deshalb existiert in diesem Modell keine Möglichkeit von (4) auf (3) oder (2) zu kommen.
-
-\section{Ergebnisse}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.48\linewidth}
@@ -163,8 +142,9 @@ Für den Fall (4) gehen wir davon aus, dass der Techniker beide Fehler gleichzei
                                 draw=blue!50!black!100, drop shadow]
                 \tikzstyle{bad} = [top color=red!30]
 
-                \node[markov,circle,label=below right:{\textbf{a}}] (1) {Alive};
-                \node[markov,bad,circle,label=below right:{\textbf{b}}] (2) [right=5 of 1]{Dead};
+                \node[markov,circle,label=below right:{\textbf{a}}] (1) {alive};
+                \node[markov,bad,circle,label=below right:{\textbf{b}}] (2)
+                [right=5 of 1]{dead};
                 \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
             \end{tikzpicture}
             \caption{Vereinfachte Variante von \Fref{fig:states_simple_mttf} \\
@@ -172,32 +152,66 @@ Für den Fall (4) gehen wir davon aus, dass der Techniker beide Fehler gleichzei
                 \textbf{Zustand b}: nicht Funktionierend}
             \label{fig:states_simple_mttf_simply}
     \end{subfigure}
-    \caption{Zustände Einfache Variante}
+    \caption{Zustände Einfache Variante MTTF}
     \label{fig:states_simple_mttf_comb}
 \end{figure}
 
-\begin{tikzpicture}[>=latex]
-    \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
-                    draw=blue!50!black!100, drop shadow]
-    \tikzstyle{bad} = [top color=red!30]
+Wir definieren für dieses Modell folgende Zustände (siehe \Fref{fig:states_simple_mttf})
+\begin{enumerate}[\bfseries a.]
+    \item das System arbeitet fehlerfrei ($3/3$ | $1/1$)
+    \item ein Node ist defekt ($2/3$ | $1/1$)
+    \item ein Switch ist defekt ($3/3$ | $0/1$)
+\end{enumerate}
 
-    \node[markov,circle split,label=below left:{1}] (42) {$4/4$ \nodepart{lower} $2/2$};
-    \node[markov,circle split,label=above right:{2}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
-    \node[markov,circle split,label=below right:{4}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
-    \node[markov,circle split,label=below right:{3}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
-    \node[markov,bad,circle,label=below right:{5}] (d)  [right=3 of 31]{dead};
-    \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
-    \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
-    \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
-    \draw[->] (41) to[bend right=-45] node[sloped,above]{$\mu_N$}(42);
-    \draw[->] (41) to node[sloped,above]{$4\lambda_R$}(31);
-    \draw[->] (31) to node[sloped,above]{$\mu_N$} (42);
-    \draw[->] (32) to node[sloped,above]{$2\lambda_N$}(31);
-    \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
-    \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
-    \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
-\end{tikzpicture}
+Da es keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt, kann das
+Modell vereinfacht werden. Wir sprechen nur noch von "alive" und "dead". (siehe
+\Fref{fig:states_simple_mttf_simply})
+Die Wahrscheinlichkeiten werden addiert.
 
+\subsubsection{Redundante Variante}
+\begin{figure}
+    \centering
+        \begin{tikzpicture}[>=latex]
+            \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                            draw=blue!50!black!100, drop shadow]
+            \tikzstyle{bad} = [top color=red!30]
+
+            \node[markov,circle split,label=below left:{\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
+            \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
+            \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
+            \draw[->] (41) to[bend right=-45] node[sloped,above]{$\mu_N$}(42);
+            \draw[->] (41) to node[sloped,above]{$4\lambda_R$}(31);
+            \draw[->] (31) to node[sloped,above]{$\mu_N$} (42);
+            \draw[->] (32) to node[sloped,above]{$2\lambda_N$}(31);
+            \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
+            \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
+            \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
+        \end{tikzpicture}
+    \caption{Zustände redundante Variante MTTF}
+    \label{fig:states_redundant_mttf}
+\end{figure}
+
+Für die redundante Variante existieren die Zustände (siehe
+\Fref{fig:states_redundant_mttf})
+\begin{enumerate}[\bfseries a.]
+    \item das System arbeitet fehlerfrei ($4/4$ | $2/2$)
+    \item ein Node ist defekt ($3/4$ | $2/2$)
+    \item ein Swich ist defekt ($4/4$ | $1/2$)
+    \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
+    \item das System ist defekt ("dead")
+\end{enumerate}
+
+Für den Fall (\textbf{d}) gehen wir davon aus, dass der Techniker beide Fehler gleichzeitig beheben kann. 
+Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus. 
+Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
+(\textbf{c}) oder (\textbf{b}) zu kommen.
+
+\section{Ergebnisse}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -219,8 +233,9 @@ Für den Fall (4) gehen wir davon aus, dass der Techniker beide Fehler gleichzei
     \end{axis} 
 \end{tikzpicture}
 \caption{Vergleich der Ausfallwahrscheinlichkeit MTTF}
+\label{fig:mttf_result}
 \end{figure}
-
+Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
 \section{Diskussion}
 
