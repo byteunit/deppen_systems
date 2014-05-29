@@ -211,7 +211,6 @@ Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus.
 Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
 (\textbf{c}) oder (\textbf{b}) zu kommen.
 
-
 \subsection{Availability}
 \subsubsection{Einfache Variante}
 \begin{figure}
@@ -257,7 +256,9 @@ Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
     \caption{Zustände Einfache Variante Availability}
     \label{fig:states_simple_avail_comb}
 \end{figure}
-Für die einfache Variante siehe \Fref{fig:states_simple_avail_comb}.
+Wir übernehmen für die Berechnung der Verfügbarkeit das vorherige Modell,
+erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
+(siehe \Fref{fig:states_simple_avail_comb}).
 
 \subsubsection{Redundante Variante}
 \begin{figure}
@@ -287,9 +288,10 @@ Für die einfache Variante siehe \Fref{fig:states_simple_avail_comb}.
     \caption{Zustände redundante Variante Availability}
     \label{fig:states_redundant_avail}
 \end{figure}
-
-Für die redundante Variante siehe \Fref{fig:states_redundant_avail}.
-
+Bei der redundanten Variante fügen wir ebenfalls ein Übergang von \enquote{dead}
+zum Startzustand ein. Für die Berechnung der Verfügbarkeit definieren wir, dass
+das System nur in den blauen Zuständen verfügbar ist (siehe
+\Fref{fig:states_redundant_avail}).
 
 \section{Ergebnisse}
 \begin{figure}
