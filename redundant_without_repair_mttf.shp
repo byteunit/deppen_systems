@@ -34,7 +34,7 @@ end
 cdf(SYS)
 
 * Start End Inc
-eval(SYS) 0 1800 18
+eval(SYS) 0 7200 72
 
 * After 2 month
 expr value(60;SYS)

@@ -18,7 +18,7 @@ end
 
 cdf(SYS)
 * beginn, x-limit, increment
-eval(SYS) 0 1800 18
+eval(SYS) 0 7200 72
 expr value(60; SYS)
 expr mean(SYS)
 end

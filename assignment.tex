@@ -7,28 +7,32 @@
 \usepackage{assignment}
 
 
-% ------------------------------------------------------------ %
-% -------------------- Math functions ------------------------ %
-% ------------------------------------------------------------ %
+%%%%%%%%%%%%%%%%%% MATH-CONSTANTS %%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\printCostFactor}{\pgfmathparse{\costFactor}\pgfmathprintnumber[fixed,
+precision=1]{\pgfmathresult}}
 \newcommand{\printpercent}[1]{\pgfmathparse{100*#1}\pgfmathprintnumber[fixed,
 precision=3]{\pgfmathresult}\%}
-\pgfmathsetmacro{\alphas}{0.96899}  %Availability value simple
-\pgfmathsetmacro{\alphar}{0.99887}  %Availability value redundant
-\pgfmathsetmacro{\Betriebskosten}{10}%Betriebskosten des einfachen Systems
-\pgfmathdeclarefunction{kst1}{3}{ %kst1(Omega, alpha_s, k)
+\pgfmathsetmacro{\alphas}{0.96899}      %Availability value simple
+\pgfmathsetmacro{\alphar}{0.99887}      %Availability value redundant
+\pgfmathsetmacro{\workingCosts}{10}     %working-costs of simple System
+\pgfmathsetmacro{\costFactor}{2.5}      %factor, the redundant-system is more
+                                        %   expensive, than simple system
+
+%%%%%%%%%%%%%%%%%% MATH-FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%
+\pgfmathdeclarefunction{kst1}{3}{       %kst1(Omega, alpha_s, k)
 	\pgfmathparse{(#1*#2)+((1-#2)*#1*#3)}
 }
 \pgfmathdeclarefunction{kst2}{3}{ %kst2(Omega, alpha_r, k)
-	\pgfmathparse{(#1*2.5*#2)+((1-#2)*#1*#3)}
+	\pgfmathparse{(#1*\costFactor*#2)+((1-#2)*#1*#3)}
 }
 \pgfmathdeclarefunction{schnittpunkt}{2} { %schnittpunkt(alphar, alphas)
-	\pgfmathparse{(2.5*#1-#2)/(#1-#2)}
+	\pgfmathparse{(\costFactor*#1-#2)/(#1-#2)}
 }
 \pgfmathsetmacro{\punktkx}{schnittpunkt(\alphar, \alphas)}
 
 \title{Praktisches Übungsbeispiel SS2014}
 \subtitle{Zuverlässigkeitsmodellierung}
-%\rohead{Übungsbeispiel SS14}
+\rohead{Übungsbeispiel SS14}
 \subject{VU Dependable Systems 182.712}
 
 \author{
@@ -46,16 +50,7 @@ precision=3]{\pgfmathresult}\%}
  \email{e1225177@student.tuwien.ac.at}
 }
 
-%\lohead{Kessler, Lechner, Wührer}
-
-
-\begin{filecontents}{DataTable.dat}
-x                        y                        labela                   labelb
-1.416197036356566059e+02 5.144315570548267715e+03 7.000000000000000000e+00 1.000000000000000000e+00
-2.416197036356566059e+02 3.144315570548267715e+03 8.000000000000000000e+00 4.000000000000000000e+00
-4.416197036356566059e+02 1.144315570548267715e+03 6.000000000000000000e+00 2.000000000000000000e+00
-\end{filecontents}
-
+\lohead{Kessler, Lechner, Wührer}
 
 \begin{document}
 
@@ -146,9 +141,9 @@ The computation of the results is done with \emph{SHARPE}.
                             draw=blue!50!black!100, drop shadow]
             \tikzstyle{bad} = [top color=red!30]
 
-            \node[markov,circle split,label=below left:{\textbf{a}}] (1) {$3/3$ \nodepart{lower} $1/1$};
-            \node[markov,bad,circle split,label=below right:{\textbf{b}}] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
-            \node[markov,bad,circle split,label=below right:{\textbf{c}}] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
+            \node[markov,circle split,label=below left:{\color{green!70!black}\textbf{a}}] (1) {$3/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\color{green!70!black}\textbf{b}}] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\color{green!70!black}\textbf{c}}] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
             \draw[->] (1) to node[sloped,above]{$3\lambda_R$}(2);
             \draw[->] (1) to node[sloped,above]{$\lambda_N$}(3);
         \end{tikzpicture}
@@ -164,8 +159,8 @@ The computation of the results is done with \emph{SHARPE}.
                                 draw=blue!50!black!100, drop shadow]
                 \tikzstyle{bad} = [top color=red!30]
 
-                \node[markov,circle,label=below right:{\textbf{a}}] (1) {alive};
-                \node[markov,bad,circle,label=below right:{\textbf{b}}] (2)
+                \node[markov,circle,label=below right:{\color{green!70!black}\textbf{a}}] (1) {alive};
+                \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{b}}] (2)
                 [right=5 of 1]{dead};
                 \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
             \end{tikzpicture}
@@ -198,11 +193,11 @@ Die Wahrscheinlichkeiten werden addiert.
                             draw=blue!50!black!100, drop shadow]
             \tikzstyle{bad} = [top color=red!30]
 
-            \node[markov,circle split,label=below left:{\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
-            \node[markov,circle split,label=above right:{\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
-            \node[markov,circle split,label=below right:{\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
-            \node[markov,circle split,label=below right:{\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
-            \node[markov,bad,circle,label=below right:{\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \node[markov,circle split,label=below left:{\color{green!70!black}\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\color{green!70!black}\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{e}}] (d)  [right=3 of 31]{dead};
             \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
             \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
             \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
@@ -225,7 +220,7 @@ Für die redundante Variante existieren die Zustände (siehe
     \item ein Node ist defekt ($3/4$ | $2/2$)
     \item ein Swich ist defekt ($4/4$ | $1/2$)
     \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
-    \item das System ist defekt ("dead")
+    \item das System ist defekt (\enquote{dead})
 \end{enumerate}
 
 Für den Fall (\textbf{d}) gehen wir davon aus, dass der Techniker beide Fehler gleichzeitig beheben kann. 
@@ -244,13 +239,13 @@ Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
                             draw=blue!50!black!100, drop shadow]
             \tikzstyle{bad} = [top color=red!30]
 
-            \node[markov,circle split,label=below left:{\textbf{a}}] (1) {$3/3$ \nodepart{lower} $1/1$};
-            \node[markov,bad,circle split,label=below right:{\textbf{b}}] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
-            \node[markov,bad,circle split,label=below right:{\textbf{c}}] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
+            \node[markov,circle split,label=below left:{\color{green!70!black}\textbf{a}}] (1) {$3/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\color{green!70!black}\textbf{b}}] (2) [above right=of 1]{$2/3$ \nodepart{lower} $1/1$};
+            \node[markov,bad,circle split,label=below right:{\color{green!70!black}\textbf{c}}] (3) [below right=of 1]{$3/3$ \nodepart{lower} $0/1$};
             \draw[->] (1) to node[sloped,above]{$3\lambda_R$}(2);
             \draw[->] (1) to node[sloped,above]{$\lambda_N$}(3);
-            \draw[->, green!70!black] (3) to[bend right=45] node[sloped,above]{$\mu_N$}(1);
-            \draw[->, green!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R$}(1);
+            \draw[->, blue!70!black] (3) to[bend right=45] node[sloped,above]{$\mu_N$}(1);
+            \draw[->, blue!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R$}(1);
         \end{tikzpicture}
         \caption{\textbf{Zustand a}: Funktionierend, \\
             \textbf{Zustand b}: Rechnerausfall, \\
@@ -264,11 +259,11 @@ Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
                                 draw=blue!50!black!100, drop shadow]
                 \tikzstyle{bad} = [top color=red!30]
 
-                \node[markov,circle,label=below right:{\textbf{a}}] (1) {alive};
-                \node[markov,bad,circle,label=below right:{\textbf{b}}] (2)
+                \node[markov,circle,label=below right:{\color{green!70!black}\textbf{a}}] (1) {alive};
+                \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{b}}] (2)
                 [right=5 of 1]{dead};
                 \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
-                \draw[->, green!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R=\mu_N$}(1);
+                \draw[->, blue!70!black] (2) to[bend right=45] node[sloped,above]{$\mu_R=\mu_N$}(1);
             \end{tikzpicture}
             \caption{Vereinfachte Variante von \Fref{fig:states_simple_avail} \\
                 \textbf{Zustand a}: Funktionierend, \\
@@ -290,11 +285,11 @@ erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
                             draw=blue!50!black!100, drop shadow]
             \tikzstyle{bad} = [top color=red!30]
 
-            \node[markov,circle split,label=below left:{\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
-            \node[markov,circle split,label=above right:{\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
-            \node[markov,circle split,label=below right:{\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
-            \node[markov,circle split,label=below right:{\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
-            \node[markov,bad,circle,label=below right:{\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \node[markov,circle split,label=below left:{\color{green!70!black}\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\color{green!70!black}\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{e}}] (d)  [right=3 of 31]{dead};
             \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
             \draw[->] (32) to[bend right=45] node[sloped,above]{$\mu_R$}(42);
             \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
@@ -305,7 +300,7 @@ erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
             \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
             \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
             \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
-            \draw[->,green!70!black] (d) to[bend right=108] node[sloped,above]{$\mu_N=\mu_R$}(42);
+            \draw[->,blue!70!black] (d) to[bend right=108] node[sloped,above]{$\mu_N=\mu_R$}(42);
         \end{tikzpicture}
     \caption{Zustände redundante Variante Availability}
     \label{fig:states_redundant_avail}
@@ -319,24 +314,25 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
 \begin{figure}
 \centering
 \begin{tikzpicture}
-    \begin{axis}[xmin=0, xmax=1800,
+    \begin{axis}[
         height=5.2cm, width=12cm,
         ymin=0, ymax=1,
         axis lines=center,
         axis on top=true,
         domain=0:1,
-        legend style={at={(axis cs:1800,0.2)},anchor=south east},
+        legend pos=south east,
+        %legend style={at={(axis cs:1800,0.2)},anchor=south east},
         xlabel=Tage,
         ylabel=Ausfallswahrscheinlichkeit,
         x label style={at={(axis description cs:1.07,0.07)},anchor=north},
         y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
         %ylabel=Number of failed banks
         ] % use TeX as calculator: 
-    \addplot[blue,thick,domain=0:1800,samples=100] table {values_simple_mttf.dat}; 
+    \addplot[blue,thick,domain=0:1800,samples=100] table {simple_mttf.dat}; 
     \addlegendentry{MTTF ohne Redundanz}
-    \addplot[red,thick,domain=0:1800,samples=100] table {values_redundancy_mttf.dat}; 
+    \addplot[red,thick,domain=0:1800,samples=100] table {redundant_mttf.dat}; 
     \addlegendentry{MTTF mit Redundanz}
-    \addplot[green,thick,domain=0:1800,samples=100] table {values_redundancy_without_repair_mttf.dat}; 
+    \addplot[green,thick,domain=0:1800,samples=100] table {redundant_without_repair_mttf.dat}; 
     \addlegendentry{-||- ohne Reparatur}
     \end{axis} 
 \end{tikzpicture}
@@ -347,10 +343,10 @@ Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
 
 \subsection{Availability}
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
-Mit den gegebenen Werte ergibt sich: $\alpha_s = 96,899\%$\\
+Mit den gegebenen Werte ergibt sich: $\alpha_s = \printpercent{\alphas}$\\
 
 Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
-In unserem Fall ergibt das: $\alpha_r = 99,887\%$\\
+In unserem Fall ergibt das: $\alpha_r = \printpercent{\alphar}$\\
 \section{Diskussion}
 TODO:
 \subsection{Kostenrechnung}
@@ -364,7 +360,7 @@ wobei $k \cdot \Omega$ die Ausfallkosten des Systems sind ($k \in
 \mathbb{N}^+$).\\$k$ stellt das Verhältnis zwischen Laufender Kosten und Ausfallkosten des einfachen Systems dar.\\
 Die Kosten des Redundanten Systems ergeben sich mit: 
 \begin{equation}
-C_r(k) = \Omega \cdot 2,5 \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k
+C_r(k) = \Omega \cdot \printCostFactor \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k
 \end{equation}
 
 Um das Verhältnis $k$ zu bestimmen, ab dem sich der Betrieb des Redundanten Systems auszahlt, muss der Schnittpunkt $k_x$ bestimmt werden:
@@ -372,9 +368,9 @@ Um das Verhältnis $k$ zu bestimmen, ab dem sich der Betrieb des Redundanten Sys
 \begin{split}
 C_s(k_x) = C_r(k_x) \\ &
  \Leftrightarrow
-\Omega \cdot \alpha_s + (1-\alpha_s)\Omega \cdot k_x = \Omega \cdot 2,5 \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k_x \\ & \Leftrightarrow
-k_x \cdot (1 - \alpha_s - 1 + \alpha_r) = 2,5 \alpha_r - \alpha_s \\ & \Leftrightarrow
-k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
+\Omega \cdot \alpha_s + (1-\alpha_s)\Omega \cdot k_x = \Omega \cdot \printCostFactor \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k_x \\ & \Leftrightarrow
+k_x \cdot (1 - \alpha_s - 1 + \alpha_r) = \printCostFactor \alpha_r - \alpha_s \\ & \Leftrightarrow
+k_x = \frac{\printCostFactor \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \end{split}
 \end{equation}
 
@@ -393,18 +389,18 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
         ytick = {0,10,...,50},
         x label style={at={(axis description cs:1.05,0.05)},anchor=north},
         y label style={at={(axis description cs:-0.07,.5)},rotate=90,anchor=south},
-        legend style={at={(axis cs:100, 5)},anchor=south east},
+        legend style={at={(axis cs:100, 2)},anchor=south east},
         %ylabel=Number of failed banks
         ] % use TeX as calculator: 
-    \addplot +[mark=none] {kst1(\Betriebskosten, \alphas, x)};
+    \addplot +[mark=none] {kst1(\workingCosts, \alphas, x)};
     \addlegendentry{Kosten simple}
-    \addplot +[mark=none] {kst2(\Betriebskosten, \alphar, x)};
+    \addplot +[mark=none] {kst2(\workingCosts, \alphar, x)};
     \addlegendentry{Kosten redundant}
     \draw[green] (axis cs:\punktkx,0) -- (axis cs:\punktkx,35) node [above]{$k_x$};
     \end{axis} 
 \end{tikzpicture}
 \caption{Vergleich der Kostenfunktionen mit Schnittpunkt $k_x$}
-\label{fig:mttf_result}
+\label{fig:cost_result}
 \end{figure}
 
 
@@ -413,7 +409,7 @@ k_x = \frac{2,5 \alpha_r - \alpha_s}{\alpha_r - \alpha_s}
 \pgfkeys{/pgf/number format,use comma,fixed,precision=5}
 
 Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
-\[k_x = \frac{2,5 \cdot \printpercent{\alphar} -
+\[k_x = \frac{\printCostFactor \cdot \printpercent{\alphar} -
 \printpercent{\alphas}}{\printpercent{\alphar} - \printpercent{\alphas}} =
 \pgfmathprintnumber[fixed, precision=3]{\punktkx} \approx
 \pgfmathprintnumber[fixed, precision=0]{\punktkx} \]
@@ -427,13 +423,17 @@ Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
 \subsection{MTTF}
 \subsubsection{MTTF Ohne Redundanz}
 \lstinputlisting{simple_mttf.shp}
+
 \subsubsection{MTTF mit Redundanz inklusive Reparatur}
-\lstinputlisting{redundancy_mttf.shp}
+\lstinputlisting{redundant_mttf.shp}
+
 \subsubsection{MTTF mit Redundanz ohne Reparatur}
-\lstinputlisting{redundancy_without_repair_mttf.shp}
+\lstinputlisting{redundant_without_repair_mttf.shp}
+\newpage
 \subsection{Availability}
 \subsubsection{Availability Ohne Redundanz}
-\lstinputlisting{simple_availibility.shp}
+\lstinputlisting{simple_availability.shp}
+
 \subsubsection{Availability mit Redundanz}
 \lstinputlisting{redundant_availability.shp}
 \end{document}
