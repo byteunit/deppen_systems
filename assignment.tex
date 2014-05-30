@@ -56,6 +56,7 @@ precision=3]{\pgfmathresult}\%}
 
 \renewcommand*{\Frefeqname}{Gleichung}
 \renewcommand*{\Freffigname}{Abbildung}
+\renewcommand*{\Frefsecname}{Abschnitt}
 
 \maketitle
 \newpage
@@ -63,15 +64,62 @@ precision=3]{\pgfmathresult}\%}
 \tableofcontents
 \newpage
 \begin{abstract}
-Our task is to create a Markov chain model for simulating the failure of a computer system. The mean time to failure and the availability of a simple and a redundant version of the system are compared. Additionally a cost evaluation between the more expensive redundant system and simple system is considered.
+Our task is to create a Markov chain model for simulating the failure of a
+computer system. The mean time to failure and the availability of a simple and a
+redundant version of the system are compared. Additionally a cost evaluation
+between the more expensive redundant system and a simple system is considered.
 The computation of the results is done with \emph{SHARPE}.
 \end{abstract}
 
 \section{Executive Summary}
-
+TODO: English BLAH BLAH
 \newpage
 
 \section{Problemstellung}
+\paragraph{Einfache Variante:}
+Ein Embedded Computersystem besteht aus drei über switched Ethernet verbundene
+Knoten. (siehe \Fref{fig:simple_variant})
+
+Die Fehlerrate jedes einzelnen Knoten beträgt $\lambda_R=10^{-4}/Std.$ und die Fehlerrate
+des Netzwerks beträgt $\lambda_N=2\cdot 10^{-5}$.
+Die Reparaturrate von Netzwerk und Node ist gleich und beträgt
+$\mu_R=\mu_N=10^{-2}/Std.$.
+
+Ein Problem bei diesem System ist, wenn ein Knoten oder das Netzwerk ausfällt, kann das System nicht mehr
+weiterarbeiten.
+
+\paragraph{Redundante Erweiterung:}
+Daher wird das System so angepasst, dass ein zusätzlicher Node und ein
+zusätzliches Netzwerk aufgebaut wird, um etwas mehr Ausfallsicherheit zu
+erhalten. (siehe \Fref{fig:redundant_variant})
+
+Wobei hier der zusätzliche Knoten im Falle eines Ausfalls sofort die
+Aufgabe jedes anderen Knoten übernehmen kann außerdem übernimmt das redundante
+Netzwerk ebenfalls sofort die Arbeit. Somit kommt es zu keiner Down-Time, wenn
+zwischen den Systemen umgeschalten wird.
+
+Auch für dieses System gilt, dass mind. 3 Knoten und ein Netzwerk funktionieren
+müssen. Es gelten dabei die Fehler- und Reparaturraten von der Einfachen
+Variante.
+
+Der Betrieb dieser erweiterten Variante ist jedoch mit zusätzlichen
+Anschaffungskosten und laufenden Betriebskosten etwa \printCostFactor-mal so
+teuer, wie der Normalbetrieb der einfachen Variante.
+
+\paragraph{Aufgaben:} Die Evaluierung, welches System für den Betrieb besser geeignet ist,
+erfordert einen genauen Vergleich der beiden Systeme. Dazu sind folgende 2
+Schritte nötig:
+\begin{enumerate}[i)]
+    \item Berechnen und vergleichen der MTTF\footnote{MTTF\dots Mean Time to
+        Failure} des einfachen und des redundanten Systems. Wobei beim
+        Redundanten System die MTTF ohne und mit Reparatur berechnet werden
+        soll. (für die Berechnung siehe \Fref{sec:sol_mttf})
+    \item Wenn das System nicht läuft, verursacht es Ausfallskosten, die ein
+        Vielfaches der Betriebskosten der einfachen Variante betragen. 
+        Es soll somit das Verhältnis von laufenden Kosten zu den Ausfallskosten
+        berechnet werden, ab dem die redundante Variante der einfachen Variante
+        vorzuziehen ist. (für die Berechnung siehe \Fref{sec:sol_avail})
+\end{enumerate}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.48\linewidth}
@@ -93,6 +141,7 @@ The computation of the results is done with \emph{SHARPE}.
         \path (sw1) edge (nd3);
     \end{tikzpicture}}
     \caption{Einfache Variante}
+    \label{fig:simple_variant}
     \end{subfigure}
     \begin{subfigure}[b]{0.48\linewidth}
     \scalebox{.85}{
@@ -122,15 +171,16 @@ The computation of the results is done with \emph{SHARPE}.
         \path (sw2) edge (nd4);
     \end{tikzpicture}}
     \caption{Fehlertolerant erweiterte Variante}
+    \label{fig:redundant_variant}
     \end{subfigure}
     \caption{Einfache und fehlertolerant erweiterte Variante des Computersystems}
 \end{figure}
 
 
 \section{Lösungsmethode}
-\subsection{MTTF}
+\subsection{MTTF}\label{sec:sol_mttf}
 
-\subsubsection{Einfache Variante}
+\paragraph{Einfache Variante:}
 
 \begin{figure}
     \centering
@@ -161,7 +211,7 @@ The computation of the results is done with \emph{SHARPE}.
 
                 \node[markov,circle,label=below right:{\color{green!70!black}\textbf{a}}] (1) {alive};
                 \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{b}}] (2)
-                [right=5 of 1]{dead};
+                [right=3 of 1]{dead};
                 \draw[->] (1) to node[sloped,above]{$3\lambda_R + \lambda_N$}(2);
             \end{tikzpicture}
             \caption{Vereinfachte Variante von \Fref{fig:states_simple_mttf} \\
@@ -169,23 +219,68 @@ The computation of the results is done with \emph{SHARPE}.
                 \textbf{Zustand b}: System funktioniert nicht}
             \label{fig:states_simple_mttf_simply}
     \end{subfigure}
-    \caption{Zustände Einfache Variante MTTF}
+    \caption{Möglichen Zustände der einfachen Variante.\\
+        Die Zustände in denen das System lauffähig ist, sind hier Blau dargestellt.}
     \label{fig:states_simple_mttf_comb}
 \end{figure}
 
-Wir definieren für dieses Modell folgende Zustände (siehe \Fref{fig:states_simple_mttf})
+Dieses Modell besitzt die folgenden Zustände: (siehe \Fref{fig:states_simple_mttf})
 \begin{enumerate}[\bfseries a.]
     \item das System arbeitet fehlerfrei ($3/3$ | $1/1$)
     \item ein Node ist defekt ($2/3$ | $1/1$)
     \item ein Switch ist defekt ($3/3$ | $0/1$)
 \end{enumerate}
 
-Da es keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt, kann das
-Modell vereinfacht werden. Wir sprechen nur noch von \enquote{alive} und \enquote{dead}. (siehe
-\Fref{fig:states_simple_mttf_simply})
-Die Wahrscheinlichkeiten werden addiert.
+Da es allerdings keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt
+(in beiden Fällen ist das System nicht mehr lauffähig), kann das
+Modell noch stärker vereinfacht werden. 
+Im folgenden wird nur noch von den Zuständen \enquote{alive} und \enquote{dead} gesprochen. 
+(siehe \Fref{fig:states_simple_mttf_simply})
 
-\subsubsection{Redundante Variante}
+Bei diesem Modell werden die Übergangswahrscheinlichkeiten vom laufenden in die
+Defekten Zustände einfach addiert.
+
+\paragraph{Redundante Variante ohne Reparatur:}
+\begin{figure}
+    \centering
+        \begin{tikzpicture}[>=latex]
+            \tikzstyle{markov} = [top color=blue!30, bottom color=white, 
+                            draw=blue!50!black!100, drop shadow]
+            \tikzstyle{bad} = [top color=red!30]
+
+            \node[markov,circle split,label=below left:{\color{green!70!black}\textbf{a}}] (42) {$4/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=above right:{\color{green!70!black}\textbf{b}}] (32) [above right=of 42]{$3/4$ \nodepart{lower} $2/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{d}}] (31) [below right=of 32]{$3/4$ \nodepart{lower} $1/2$};
+            \node[markov,circle split,label=below right:{\color{green!70!black}\textbf{c}}] (41) [below right=of 42]{$4/4$ \nodepart{lower} $1/2$};
+            \node[markov,bad,circle,label=below right:{\color{green!70!black}\textbf{e}}] (d)  [right=3 of 31]{dead};
+            \draw[->] (42) to node[sloped,above]{$4\lambda_R$}(32);
+            \draw[->] (42) to node[sloped,above]{$2\lambda_N$}(41);
+            \draw[->] (41) to node[sloped,above]{$4\lambda_R$}(31);
+            \draw[->] (32) to node[sloped,above]{$2\lambda_N$}(31);
+            \draw[->] (32) to[bend left=20] node[sloped,above]{$3\lambda_R$}(d);
+            \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
+            \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
+        \end{tikzpicture}
+    \caption{Mögliche Zustände der redundanten Variante ohne Reparatur.\\
+        Die Zustände in denen das System lauffähig ist, sind hier Blau dargestellt.}
+    \label{fig:states_redundant_without_rep}
+\end{figure}
+
+Dieses Modell besitzt bereits viel mehr Zustände, da hier auch mit ausgefallenen
+Komponenten noch ein laufender Zustand möglich ist. (siehe
+\Fref{fig:states_redundant_without_rep})
+\begin{enumerate}[\bfseries a.]
+    \item das System arbeitet fehlerfrei ($4/4$ | $2/2$)
+    \item ein Node ist defekt ($3/4$ | $2/2$)
+    \item ein Swich ist defekt ($4/4$ | $1/2$)
+    \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
+    \item das System ist defekt (\enquote{dead})
+\end{enumerate}
+Jedoch ist diese Variante für die Praxis eher ungeeignet, denn ein Redundantes
+System ohne Reparatur macht meist wenig Sinn. Besser ist hier die Redundante
+Variante mit Reparatur. (Das zeigt auch die Lösung in \Fref{sec:results_mttf})
+
+\paragraph{Redundante Variante mit Reparatur:}
 \begin{figure}
     \centering
         \begin{tikzpicture}[>=latex]
@@ -209,12 +304,15 @@ Die Wahrscheinlichkeiten werden addiert.
             \draw[->] (31) to node[sloped,above]{$3\lambda_R+\lambda_N$}(d);
             \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
         \end{tikzpicture}
-    \caption{Zustände redundante Variante MTTF}
-    \label{fig:states_redundant_mttf}
+    \caption{Mögliche Zustände der redundanten Variante mit Reparatur.\\
+        Die Zustände in denen das System lauffähig ist, sind hier Blau dargestellt.}
+    \label{fig:states_redundant_with_rep}
 \end{figure}
 
-Für die redundante Variante existieren die Zustände (siehe
-\Fref{fig:states_redundant_mttf})
+Dieses Modell besitzt die gleichen Zustände, wie das System ohne Reparatur, jedoch
+sind die zusätzlichen Zustandswechsel nach der Reparatur auch noch
+eingezeichnet. (siehe
+\Fref{fig:states_redundant_with_rep})
 \begin{enumerate}[\bfseries a.]
     \item das System arbeitet fehlerfrei ($4/4$ | $2/2$)
     \item ein Node ist defekt ($3/4$ | $2/2$)
@@ -223,13 +321,25 @@ Für die redundante Variante existieren die Zustände (siehe
     \item das System ist defekt (\enquote{dead})
 \end{enumerate}
 
-Für den Fall (\textbf{d}) gehen wir davon aus, dass der Techniker beide Fehler gleichzeitig beheben kann. 
-Beispielsweise kommt er mit einem Ersatznode und -switch und tauscht beide aus. 
-Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
+Für den Fall (\textbf{d}) wird davon ausgegangen, dass der Techniker beide Fehler 
+gleichzeitig beheben kann, was in der Praxis nicht unrealistisch ist.
+So werden beispielsweise in großen Rechenzentren die Techniker immer mit genügend
+Ersatzkomponenten ausgestattet, um diese möglichst rasch durch die defekten Komponenten
+ersetzen zu können (somit ist nur ein einfaches Ab- und Anstecken notwendig).
+Erst nach dem erfolgreichen Tausch (meist in der Werkstatt) werden die
+Komponenten repariert. 
+
+Das Zeitaufwendigste an einer Reparatur ist meist, dass ein
+Techniker (der oftmals nur in Bereitschaft ist) vor Ort kommen muss, um den
+Komponententausch durchzuführen.
+
+Beispielsweise kann dieser immer mit Ersatznode und -switch ausgestattet sein
+und ggf. beide austauschen. 
+Deshalb existiert in diesem Modell keine Möglichkeit, um von (\textbf{d}) auf
 (\textbf{c}) oder (\textbf{b}) zu kommen.
 
-\subsection{Availability}
-\subsubsection{Einfache Variante}
+\subsection{Availability}\label{sec:sol_avail}
+\paragraph{Einfache Variante:}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.48\linewidth}
@@ -270,14 +380,20 @@ Deshalb existiert in diesem Modell keine Möglichkeit von (\textbf{d}) auf
                 \textbf{Zustand b}: nicht Funktionierend}
             \label{fig:states_simple_avail_simply}
     \end{subfigure}
-    \caption{Zustände Einfache Variante Availability}
+    \caption{Zustände der einfachen Variante zur Berechnung der Availability.\\
+        Die Zustände in denen das System lauffähig ist, sind hier Blau
+    dargestellt.}
     \label{fig:states_simple_avail_comb}
 \end{figure}
-Wir übernehmen für die Berechnung der Verfügbarkeit das vorherige Modell,
-erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
+Zur Berechnung der Availability besitzt dieses Modell die selben Zustände, die
+auch zur Berechnung der MTTF verwendet wurden. Jedoch wird zusätzlich ein
+Übergang vom Zustand \enquote{dead} zu den Zuständen \enquote{alive} eingeführt.
+Auch hier wird angenommen, dass der Techniker alle Fehler gleichzeitig beheben
+kann und somit direkt in den Zustand \enquote{alive}(alle Komponenten
+funktionieren) wechseln kann.
 (siehe \Fref{fig:states_simple_avail_comb}).
 
-\subsubsection{Redundante Variante}
+\paragraph{Redundante Variante:}
 \begin{figure}
     \centering
         \begin{tikzpicture}[>=latex]
@@ -302,15 +418,26 @@ erweitern es jedoch mit einem Übergang von \enquote{dead} zu \enquote{alive}
             \draw[->] (41) to[bend right=20] node[sloped,above]{$\lambda_N$}(d);
             \draw[->,blue!70!black] (d) to[bend right=108] node[sloped,above]{$\mu_N=\mu_R$}(42);
         \end{tikzpicture}
-    \caption{Zustände redundante Variante Availability}
+    \caption{Zustände der redundanten Variante zur Berechnung der Availability.\\
+        Die Zustände in denen das System lauffähig ist, sind hier Blau
+    dargestellt.}
     \label{fig:states_redundant_avail}
 \end{figure}
-Bei der redundanten Variante fügen wir ebenfalls ein Übergang von \enquote{dead}
-zum Startzustand ein. Für die Berechnung der Verfügbarkeit definieren wir, dass
-das System nur in den blauen Zuständen verfügbar ist (siehe
+Zur Berechnung der Availability von diesem System wird hier ebenso ein Übergang von \enquote{dead} 
+zum Startzustand eingeführt. 
+Für die Berechnung der Verfügbarkeit wird definiert, dass das System noch
+lauffähig ist, wenn es sich in einem der blauen Zustände befindet. (siehe
 \Fref{fig:states_redundant_avail}).
 
+\paragraph{Kostenvergleich:}
+Um nun die Kosten der beiden Varianten zu vergleichen, muss von beiden Systemen
+die Availability berechnet werden. (\Fref{sec:res_avail}) Erst dann können die Ausfallskosten zu den
+laufenden Kosten in Relation gestellt und verglichen werden. (siehe
+\Fref{sec:cost_calc})
+
 \section{Ergebnisse}
+
+\subsection{MTTF}\label{sec:results_mttf}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -329,19 +456,28 @@ das System nur in den blauen Zuständen verfügbar ist (siehe
         %ylabel=Number of failed banks
         ] % use TeX as calculator: 
     \addplot[blue,thick,domain=0:1800,samples=100] table {simple_mttf.dat}; 
-    \addlegendentry{MTTF ohne Redundanz}
-    \addplot[red,thick,domain=0:1800,samples=100] table {redundant_mttf.dat}; 
-    \addlegendentry{MTTF mit Redundanz}
+    \addlegendentry{Simple Variante}
     \addplot[green,thick,domain=0:1800,samples=100] table {redundant_without_repair_mttf.dat}; 
-    \addlegendentry{-||- ohne Reparatur}
+    \addlegendentry{Red. Variante (o. Rep.)}
+    \addplot[red,thick,domain=0:1800,samples=100] table {redundant_mttf.dat}; 
+    \addlegendentry{Red. Variante (m. Rep.)}
     \end{axis} 
 \end{tikzpicture}
-\caption{Vergleich der Ausfallwahrscheinlichkeit MTTF}
+\caption{Vergleich der MTTF der simplen Variante (siehe
+    \Fref{fig:states_simple_mttf_simply}), \\
+    der redundanten Variante ohne Reparatur (siehe
+    \Fref{fig:states_redundant_without_rep})\\
+    und der redundanten Variante mit Reparatur (siehe \Fref{fig:states_redundant_with_rep})}
 \label{fig:mttf_result}
 \end{figure}
-Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
+TODO: viel BLAHBLAH
 
-\subsection{Availability}
+Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
+Diese Ergebnisse wurden durch \Fref{sec:calc_mttf_simple},
+\Fref{sec:calc_mttf_redundant} und \Fref{sec:calc_mttf_redundant_rep} berechnet.
+
+\subsection{Availability}\label{sec:res_avail}
+TODO: viel blah blah
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
 Mit den gegebenen Werte ergibt sich: $\alpha_s = \printpercent{\alphas}$\\
 
@@ -349,7 +485,7 @@ Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrsche
 In unserem Fall ergibt das: $\alpha_r = \printpercent{\alphar}$\\
 \section{Diskussion}
 TODO:
-\subsection{Kostenrechnung}
+\subsection{Kostenrechnung}\label{sec:cost_calc}
 Aus der Simulation mit \emph{SHARPE} haben wir die beiden Availability Werte $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System erhalten.\\
 Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
 \begin{equation}
@@ -417,17 +553,18 @@ Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
 \pgfkeys{/pgf/fpu=false}
 
 \section{Fazit}
+TODO: blahblah
 \newpage
 \appendix
 \section{Sharpe-Quellcode}
 \subsection{MTTF}
-\subsubsection{MTTF Ohne Redundanz}
+\subsubsection{MTTF Ohne Redundanz}\label{sec:calc_mttf_simple}
 \lstinputlisting{simple_mttf.shp}
 
-\subsubsection{MTTF mit Redundanz inklusive Reparatur}
+\subsubsection{MTTF mit Redundanz inklusive Reparatur}\label{sec:calc_mttf_redundant_rep}
 \lstinputlisting{redundant_mttf.shp}
 
-\subsubsection{MTTF mit Redundanz ohne Reparatur}
+\subsubsection{MTTF mit Redundanz ohne Reparatur}\label{sec:calc_mttf_redundant}
 \lstinputlisting{redundant_without_repair_mttf.shp}
 \newpage
 \subsection{Availability}
