@@ -5,6 +5,7 @@
 %\usepackage[biber]{assignment}
 %\addbibresource{references.bib}
 \usepackage{assignment}
+\usepackage{siunitx}
 
 
 %%%%%%%%%%%%%%%%%% MATH-CONSTANTS %%%%%%%%%%%%%%%%%%%%%%
@@ -32,7 +33,7 @@ precision=3]{\pgfmathresult}\%}
 
 \title{Praktisches Übungsbeispiel SS2014}
 \subtitle{Zuverlässigkeitsmodellierung}
-\rohead{Übungsbeispiel SS14}
+%\rohead{Übungsbeispiel SS14}
 \subject{VU Dependable Systems 182.712}
 
 \author{
@@ -50,7 +51,7 @@ precision=3]{\pgfmathresult}\%}
  \email{e1225177@student.tuwien.ac.at}
 }
 
-\lohead{Kessler, Lechner, Wührer}
+%\lohead{Kessler, Lechner, Wührer}
 
 \begin{document}
 
@@ -72,7 +73,7 @@ The computation of the results is done with \emph{SHARPE}.
 \end{abstract}
 
 \section{Executive Summary}
-TODO: English BLAH BLAH
+We created Markov models for the simple, the redundant and the redundant with repair variant of the System, to compute the MTTF. The failure probability of the three networks were calculated and plotted. The limit of the proportion between the operative and the failure costs was computed with the help of the availability values of the systems. 
 \newpage
 
 \section{Problemstellung}
@@ -470,21 +471,24 @@ laufenden Kosten in Relation gestellt und verglichen werden. (siehe
     und der redundanten Variante mit Reparatur (siehe \Fref{fig:states_redundant_with_rep})}
 \label{fig:mttf_result}
 \end{figure}
-TODO: viel BLAHBLAH
-
-Die Ergebnisse von MTTF sind in \Fref{fig:mttf_result} dargestellt.
-Diese Ergebnisse wurden durch \Fref{sec:calc_mttf_simple},
+Die Ergebnisse der MTTF Simulation sind in \Fref{fig:mttf_result} dargestellt.
+Diese Ergebnisse wurden mit Hilfe der \emph{SHARPE} Skripten \Fref{sec:calc_mttf_simple},
 \Fref{sec:calc_mttf_redundant} und \Fref{sec:calc_mttf_redundant_rep} berechnet.
 
 \subsection{Availability}\label{sec:res_avail}
-TODO: viel blah blah
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
 Mit den gegebenen Werte ergibt sich: $\alpha_s = \printpercent{\alphas}$\\
+Für die Programmsequenzen, die für die Berechnung von $\alpha_s$ verwenden wurde, siehe \Fref{sec:calc_aval_simple}.
 
 Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
 In unserem Fall ergibt das: $\alpha_r = \printpercent{\alphar}$\\
+Für die \emph{SHARPE} Skripten siehe \Fref{sec:calc_aval_redundant}.\\
+
 \section{Diskussion}
-TODO:
+\subsection{MTTF}
+Beim Vergleich der MTTF Graphen (siehe \Fref{fig:mttf_result}), wurde festgestellt, dass sich die Ausfallwahrscheinlichkeit der Redundanten Variante mit Reparatur deutlich von den beiden anderen Systemen abhebt. \\
+Während die einfache Variante bereits nach einem Jahr mit einer Wahrscheinlichkeit von über 98\% ausgefallen ist, funktioniert das redundante System nach der gleichen Zeit noch mit einer Wahrscheinlichkeit von 20\%. Dieser Wert deduziert sich allerdings im zweiten Jahr auf unter 2\%. \\
+Die redundante Variante mit Reparatur, ist selbst nach dem dritten Jahr noch mit über 75\%-iger Wahrscheinlichkeit im Betrieb. Erst nach über 5900 Tagen (entspricht 16 Jahren) steigt die Ausfallwahrscheinlichkeit über 80\%.
 \subsection{Kostenrechnung}\label{sec:cost_calc}
 Aus der Simulation mit \emph{SHARPE} können die beiden Availability Werte
 $\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System
@@ -555,7 +559,11 @@ Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
 \pgfkeys{/pgf/fpu=false}
 
 \section{Fazit}
-TODO: blahblah
+Wie in \Fref{sec:results_mttf} gesehen wurde, hebt sich das redundante System vom einfachen erst mit Reparatur stark vom einfachen System ab. Dies ist der im Verhältnis sehr hohen \emph{repair-rate} zu verdanken.
+
+Um das Verhältnis der Ausfalls- und Betriebskosten zu veranschaulichen nehme man folgendes Zahlenbeispiel an:\\
+Wenn das einfache System im Betrieb am Tag \num{1000}€ veranschlagt und ein Ausfall pro Tag \num{50000}€ kostet, zahlt sich dieses System mathematisch gesehen noch aus. \\
+Eine mögliche Dimensionierung des Netzwerks  mit der einfache Variante ist deshalb nicht außer acht zu lassen.
 \newpage
 \appendix
 \section{Sharpe-Quellcode}
@@ -570,9 +578,9 @@ TODO: blahblah
 \lstinputlisting{redundant_without_repair_mttf.shp}
 \newpage
 \subsection{Availability}
-\subsubsection{Availability Ohne Redundanz}
+\subsubsection{Availability Ohne Redundanz}\label{sec:calc_aval_simple}
 \lstinputlisting{simple_availability.shp}
 
-\subsubsection{Availability mit Redundanz}
+\subsubsection{Availability mit Redundanz}\label{sec:calc_aval_redundant}
 \lstinputlisting{redundant_availability.shp}
 \end{document}
