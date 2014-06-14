@@ -5,7 +5,6 @@
 %\usepackage[biber]{assignment}
 %\addbibresource{references.bib}
 \usepackage{assignment}
-\usepackage{siunitx}
 
 
 %%%%%%%%%%%%%%%%%% MATH-CONSTANTS %%%%%%%%%%%%%%%%%%%%%%
@@ -33,7 +32,7 @@ precision=3]{\pgfmathresult}\%}
 
 \title{Praktisches Übungsbeispiel SS2014}
 \subtitle{Zuverlässigkeitsmodellierung}
-%\rohead{Übungsbeispiel SS14}
+\rohead{Übungsbeispiel SS14}
 \subject{VU Dependable Systems 182.712}
 
 \author{
@@ -51,7 +50,7 @@ precision=3]{\pgfmathresult}\%}
  \email{e1225177@student.tuwien.ac.at}
 }
 
-%\lohead{Kessler, Lechner, Wührer}
+\lohead{Kessler, Lechner, Wührer}
 
 \begin{document}
 
@@ -177,7 +176,7 @@ Schritte nötig:
     \caption{Einfache und fehlertolerant erweiterte Variante des Computersystems}
 \end{figure}
 
-
+\newpage
 \section{Lösungsmethode}
 \subsection{MTTF}\label{sec:sol_mttf}
 
@@ -275,7 +274,7 @@ Komponenten noch ein laufender Zustand möglich ist. (siehe
     \item ein Node ist defekt ($3/4$ | $2/2$)
     \item ein Swich ist defekt ($4/4$ | $1/2$)
     \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
-    \item das System ist defekt (\enquote{dead})
+    \item das System ist nicht mehr lauffähig (\enquote{dead})
 \end{enumerate}
 Jedoch ist diese Variante für die Praxis eher ungeeignet, denn ein Redundantes
 System ohne Reparatur macht meist wenig Sinn. Besser ist hier die Redundante
@@ -319,7 +318,7 @@ eingezeichnet. (siehe
     \item ein Node ist defekt ($3/4$ | $2/2$)
     \item ein Swich ist defekt ($4/4$ | $1/2$)
     \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
-    \item das System ist defekt (\enquote{dead})
+    \item das System ist nicht mehr lauffähig (\enquote{dead})
 \end{enumerate}
 
 Für den Fall (\textbf{d}) wird davon ausgegangen, dass der Techniker beide Fehler 
@@ -464,6 +463,7 @@ laufenden Kosten in Relation gestellt und verglichen werden. (siehe
     \addlegendentry{Red. Variante (m. Rep.)}
     \end{axis} 
 \end{tikzpicture}
+
 \caption{Vergleich der MTTF der simplen Variante (siehe
     \Fref{fig:states_simple_mttf_simply}), \\
     der redundanten Variante ohne Reparatur (siehe
@@ -471,23 +471,87 @@ laufenden Kosten in Relation gestellt und verglichen werden. (siehe
     und der redundanten Variante mit Reparatur (siehe \Fref{fig:states_redundant_with_rep})}
 \label{fig:mttf_result}
 \end{figure}
+
+\begin{table}
+\centering
+\pgfkeys{/pgf/fpu=true}
+\pgfkeys{/pgf/number format,use comma,fixed,precision=4}
+
+\pgfplotstableset{
+    every head row/.style={before row=\hline, after row=\hline},
+    every last row/.style={after row=\hline},
+    create on use/tmp/.style={create col/set list={1,2,3,...,50}}}
+\pgfplotstableread{simple_mttf.dat}\loadedtableSimple
+\pgfplotstableread{redundant_mttf.dat}\loadedtableRed
+\pgfplotstableread{redundant_without_repair_mttf.dat}\loadedtableRedWithout
+
+\pgfplotstablenew[columns=tmp]{50}\tbl
+\pgfplotstablecreatecol[copy column from table={\loadedtableSimple}{[index]0}]
+{Tage}{\tbl}
+\pgfplotstablecreatecol[copy column from table={\loadedtableSimple}{[index] 1}] 
+{simpel}{\tbl}
+\pgfplotstablecreatecol[copy column from table={\loadedtableRedWithout}{[index] 1}] 
+{redund. ohne}{\tbl}
+\pgfplotstablecreatecol[copy column from table={\loadedtableRed}{[index] 1}]
+{redund. mit}{\tbl}
+
+%\pgfplotstabletypeset\tbl
+
+%\pgfplotstabletypeset[skip first n=4]\loadedtableSimple
+
+\pgfplotstabletypeset[
+    columns={Tage,simpel, redund. ohne, redund. mit,Tage,simpel, redund. ohne,
+        redund. mit},
+    display columns/0/.style={select equal part entry of={0}{2}},
+    display columns/1/.style={select equal part entry of={0}{2}},
+    display columns/2/.style={select equal part entry of={0}{2}},
+    display columns/3/.style={
+        select equal part entry of={0}{2}, column type/.add={}{|}},
+    display columns/4/.style={select equal part entry of={1}{2}},
+    display columns/5/.style={select equal part entry of={1}{2}},
+    display columns/6/.style={select equal part entry of={1}{2}},
+    display columns/7/.style={select equal part entry of={1}{2}},
+]\tbl
+\pgfkeys{/pgf/fpu=false}
+\caption{Mit \emph{SHARPE} ermittelte Datenwerte:\\
+    Wobei hier der Spaltenname \enquote{redund. ohne} das Modell mit Redundanz,
+    aber ohne Reparatur bezeichnet und der Spaltenname \enquote{redund. mit} das
+    Modell mit Redundanz und mit Reparatur bezeichnet.}
+\label{tab:mttf_result}
+\end{table}
+
+
+
+
 Die Ergebnisse der MTTF Simulation sind in \Fref{fig:mttf_result} dargestellt.
-Diese Ergebnisse wurden mit Hilfe der \emph{SHARPE} Skripten \Fref{sec:calc_mttf_simple},
+Diese Ergebnisse wurden mit Hilfe der \emph{SHARPE}-Programme \Fref{sec:calc_mttf_simple},
 \Fref{sec:calc_mttf_redundant} und \Fref{sec:calc_mttf_redundant_rep} berechnet.
+Für die genauen Werte, siehe \Fref{tab:mttf_result}.
 
 \subsection{Availability}\label{sec:res_avail}
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
 Mit den gegebenen Werte ergibt sich: $\alpha_s = \printpercent{\alphas}$\\
-Für die Programmsequenzen, die für die Berechnung von $\alpha_s$ verwenden wurde, siehe \Fref{sec:calc_aval_simple}.
+Für die Programmsequenzen, die für die Berechnung von $\alpha_s$ verwendet
+wurden, siehe \Fref{sec:calc_aval_simple}.
 
 Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
 In unserem Fall ergibt das: $\alpha_r = \printpercent{\alphar}$\\
-Für die \emph{SHARPE} Skripten siehe \Fref{sec:calc_aval_redundant}.\\
+Für die \emph{SHARPE}-Programme siehe \Fref{sec:calc_aval_redundant}.\\
 
 \section{Diskussion}
 \subsection{MTTF}
-Beim Vergleich der MTTF Graphen (siehe \Fref{fig:mttf_result}), wurde festgestellt, dass sich die Ausfallwahrscheinlichkeit der Redundanten Variante mit Reparatur deutlich von den beiden anderen Systemen abhebt. \\
-Während die einfache Variante bereits nach einem Jahr mit einer Wahrscheinlichkeit von über 98\% ausgefallen ist, funktioniert das redundante System nach der gleichen Zeit noch mit einer Wahrscheinlichkeit von 20\%. Dieser Wert deduziert sich allerdings im zweiten Jahr auf unter 2\%. \\
+Beim Vergleich der MTTF Graphen (siehe \Fref{fig:mttf_result}), wurde festgestellt, dass sich die 
+Ausfallwahrscheinlichkeit der redundanten Variante mit Reparatur deutlich von den beiden anderen 
+Systemen abhebt.
+
+Das bedeutet, eine redundante Variante ohne Reparatur ist in etwa vergleichbar
+mit der simplen Variante. Nur dass die redundante Variante natürlich
+in der Anschaffung und im Betrieb teurer ist.
+
+Während die einfache Variante bereits nach einem Jahr mit einer
+Wahrscheinlichkeit von über 98\% ausgefallen ist, funktioniert das redundante
+System nach der gleichen Zeit noch mit einer Wahrscheinlichkeit von 20\%. Dieser
+Wert reduziert sich allerdings im zweiten Jahr auf unter 2\%. \\
 Die redundante Variante mit Reparatur, ist selbst nach dem dritten Jahr noch mit über 75\%-iger Wahrscheinlichkeit im Betrieb. Erst nach über 5900 Tagen (entspricht 16 Jahren) steigt die Ausfallwahrscheinlichkeit über 80\%.
 \subsection{Kostenrechnung}\label{sec:cost_calc}
 Aus der Simulation mit \emph{SHARPE} können die beiden Availability Werte
@@ -561,9 +625,14 @@ Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
 \section{Fazit}
 Wie in \Fref{sec:results_mttf} gesehen wurde, hebt sich das redundante System vom einfachen erst mit Reparatur stark vom einfachen System ab. Dies ist der im Verhältnis sehr hohen \emph{repair-rate} zu verdanken.
 
-Um das Verhältnis der Ausfalls- und Betriebskosten zu veranschaulichen nehme man folgendes Zahlenbeispiel an:\\
-Wenn das einfache System im Betrieb am Tag \num{1000}€ veranschlagt und ein Ausfall pro Tag \num{50000}€ kostet, zahlt sich dieses System mathematisch gesehen noch aus. \\
-Eine mögliche Dimensionierung des Netzwerks  mit der einfache Variante ist deshalb nicht außer acht zu lassen.
+Um das Verhältnis der Ausfalls- und Betriebskosten zu veranschaulichen kann
+folgendes Zahlenbeispiel angenommen werden:\\
+Für das einfache System werden im Betrieb am Tag \num{1000}€ veranschlagt und
+für einen Ausfall werden pro Tag \num{50000}€ angenommen, dann zahlt sich dieses
+einfache System mathematisch gesehen noch aus. \\
+Es ist daher durchaus gerechtfertigt, als mögliche Variante auch über das
+einfache System nachzudenken, denn erst bei Ausfallskosten über \num{51144}€
+rechnet sich das redundante System.
 \newpage
 \appendix
 \section{Sharpe-Quellcode}
