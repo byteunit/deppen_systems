@@ -63,44 +63,41 @@ precision=3]{\pgfmathresult}\%}
 
 \tableofcontents
 \newpage
+\section{Abstract}
 \begin{abstract}
 Our task is to create a Markov chain model for simulating the failure of a
-computer system. The mean time to failure and the availability of a simple and a
-redundant version of the system are compared. Additionally a cost evaluation
-between the more expensive redundant system and a simple system is considered.
+computer system. The MTTF\footnote{MTTF\dots Mean Time to Failure} and the 
+availability of a simple and a redundant version of the system are compared. 
+Additionally a cost evaluation between the two systems is considered.
 The computation of the results is done with \emph{SHARPE}.
 \end{abstract}
 
 \section{Executive Summary}
-We created Markov models for the simple, the redundant and the redundant with repair variant of the System, to compute the MTTF. The failure probability of the three networks were calculated and plotted. The limit of the proportion between the operative and the failure costs was computed with the help of the availability values of the systems. 
+We created Markov models to compute the MTTF for the following systems:
+	\begin{enumerate}[a)]
+		\item simple
+		\item redundant
+		\item redundant with repair variant of the system
+	\end{enumerate}
+	The failure probability of the three networks were calculated and plotted. The limit of the proportion between the operative and the failure costs was computed with the help of the availability values of the systems. We are going to demonstrate the improvements and benefits from maintenance and redundancy.
 \newpage
 
 \section{Problemstellung}
 \paragraph{Einfache Variante:}
 Ein Embedded Computersystem besteht aus drei über switched Ethernet verbundene
-Knoten. (siehe \Fref{fig:simple_variant})
+Knoten (siehe \Fref{fig:simple_variant}).
 
 Die Fehlerrate jedes einzelnen Knoten beträgt $\lambda_R=10^{-4}/Std.$ und die Fehlerrate
 des Netzwerks beträgt $\lambda_N=2\cdot 10^{-5}$.
-Die Reparaturrate von Netzwerk und Node ist gleich und beträgt
-$\mu_R=\mu_N=10^{-2}/Std.$.
+Die Reparaturraten von Netzwerk und Node sind identisch und betragen $\mu_R=\mu_N=10^{-2}/Std.$
 
-Ein Problem bei diesem System ist, wenn ein Knoten oder das Netzwerk ausfällt, kann das System nicht mehr
-weiterarbeiten.
+Im Falle eines Node- bzw. Netzwerkausfalls kann das System jedoch nicht mehr weiterarbeiten.
 
 \paragraph{Redundante Erweiterung:}
-Daher wird das System so angepasst, dass ein zusätzlicher Node und ein
-zusätzliches Netzwerk aufgebaut wird, um etwas mehr Ausfallsicherheit zu
-erhalten. (siehe \Fref{fig:redundant_variant})
+Um diesem Problem vorzubeugen und die Funktionsfähigkeit zu verbessern, wir das System um einen Node sowie einen Switch erweitert (siehe \Fref{fig:redundant_variant}). Der zusätzliche Knoten übernimmt im Falle eines Nodeausfalls sofort dessen Arbeit. Das gleiche gilt für den Switch, es entsteht somit keine Down-Time, das System bleibt \emph{fail-operational}.
 
-Wobei hier der zusätzliche Knoten im Falle eines Ausfalls sofort die
-Aufgabe jedes anderen Knoten übernehmen kann außerdem übernimmt das redundante
-Netzwerk ebenfalls sofort die Arbeit. Somit kommt es zu keiner Down-Time, wenn
-zwischen den Systemen umgeschalten wird.
-
-Auch für dieses System gilt, dass mind. 3 Knoten und ein Netzwerk funktionieren
-müssen. Es gelten dabei die Fehler- und Reparaturraten von der Einfachen
-Variante.
+Auch für diese redundante Variante gilt, dass mindestens 3 Knoten und ein Netzwerk funktionieren
+müssen. Es gelten dabei die Fehler- und Reparaturraten der einfachen Variante.
 
 Der Betrieb dieser erweiterten Variante ist jedoch mit zusätzlichen
 Anschaffungskosten und laufenden Betriebskosten etwa \printCostFactor-mal so
@@ -110,15 +107,14 @@ teuer, wie der Normalbetrieb der einfachen Variante.
 erfordert einen genauen Vergleich der beiden Systeme. Dazu sind folgende 2
 Schritte nötig:
 \begin{enumerate}[i)]
-    \item Berechnen und vergleichen der MTTF\footnote{MTTF\dots Mean Time to
-        Failure} des einfachen und des redundanten Systems. Wobei beim
-        Redundanten System die MTTF ohne und mit Reparatur berechnet werden
+    \item Berechnen und vergleichen der MTTF des einfachen und des redundanten Systems. Wobei beim
+        redundanten System die MTTF ohne und mit Reparatur berechnet werden
         soll. (für die Berechnung siehe \Fref{sec:sol_mttf})
     \item Wenn das System nicht läuft, verursacht es Ausfallskosten, die ein
         Vielfaches der Betriebskosten der einfachen Variante betragen. 
         Es soll somit das Verhältnis von laufenden Kosten zu den Ausfallskosten
         berechnet werden, ab dem die redundante Variante der einfachen Variante
-        vorzuziehen ist. (für die Berechnung siehe \Fref{sec:sol_avail})
+        vorzuziehen ist (für die Berechnung siehe \Fref{sec:sol_avail}).
 \end{enumerate}
 \begin{figure}
     \centering
@@ -234,11 +230,11 @@ Dieses Modell besitzt die folgenden Zustände: (siehe \Fref{fig:states_simple_mt
 Da es allerdings keine Rolle spielt, ob ein Rechner oder das Netzwerk ausfällt
 (in beiden Fällen ist das System nicht mehr lauffähig), kann das
 Modell noch stärker vereinfacht werden. 
-Im folgenden wird nur noch von den Zuständen \enquote{alive} und \enquote{dead} gesprochen. 
-(siehe \Fref{fig:states_simple_mttf_simply})
+Im Folgenden wird nur noch von den Zuständen \enquote{alive} und \enquote{dead} gesprochen 
+(siehe \Fref{fig:states_simple_mttf_simply}).
 
 Bei diesem Modell werden die Übergangswahrscheinlichkeiten vom laufenden in die
-Defekten Zustände einfach addiert.
+defekten Zustände einfach addiert.
 
 \paragraph{Redundante Variante ohne Reparatur:}
 \begin{figure}
@@ -276,9 +272,9 @@ Komponenten noch ein laufender Zustand möglich ist. (siehe
     \item ein Node sowie ein Switch sind defekt ($3/4$ | $1/1$)
     \item das System ist nicht mehr lauffähig (\enquote{dead})
 \end{enumerate}
-Jedoch ist diese Variante für die Praxis eher ungeeignet, denn ein Redundantes
-System ohne Reparatur macht meist wenig Sinn. Besser ist hier die Redundante
-Variante mit Reparatur. (Das zeigt auch die Lösung in \Fref{sec:results_mttf})
+Jedoch ist diese Variante für die Praxis eher ungeeignet, denn ein redundantes
+System ohne Reparatur macht meist wenig Sinn. Besser ist hier die
+Variante mit Reparatur (siehe Lösung in \Fref{sec:results_mttf}).
 
 \paragraph{Redundante Variante mit Reparatur:}
 \begin{figure}
@@ -311,8 +307,7 @@ Variante mit Reparatur. (Das zeigt auch die Lösung in \Fref{sec:results_mttf})
 
 Dieses Modell besitzt die gleichen Zustände, wie das System ohne Reparatur, jedoch
 sind die zusätzlichen Zustandswechsel nach der Reparatur auch noch
-eingezeichnet. (siehe
-\Fref{fig:states_redundant_with_rep})
+eingezeichnet (siehe \Fref{fig:states_redundant_with_rep}). 
 \begin{enumerate}[\bfseries a.]
     \item das System arbeitet fehlerfrei ($4/4$ | $2/2$)
     \item ein Node ist defekt ($3/4$ | $2/2$)
@@ -387,11 +382,10 @@ Deshalb existiert in diesem Modell keine Möglichkeit, um von (\textbf{d}) auf
 \end{figure}
 Zur Berechnung der Availability besitzt dieses Modell die selben Zustände, die
 auch zur Berechnung der MTTF verwendet wurden. Jedoch wird zusätzlich ein
-Übergang vom Zustand \enquote{dead} zu den Zuständen \enquote{alive} eingeführt.
+Übergang vom Zustand \enquote{dead} zu dem Zustand \enquote{alive} eingeführt.
 Auch hier wird angenommen, dass der Techniker alle Fehler gleichzeitig beheben
-kann und somit direkt in den Zustand \enquote{alive}(alle Komponenten
-funktionieren) wechseln kann.
-(siehe \Fref{fig:states_simple_avail_comb}).
+kann und somit direkt in den Zustand \enquote{alive} (alle Komponenten
+funktionieren) wechseln kann (siehe \Fref{fig:states_simple_avail_comb}).
 
 \paragraph{Redundante Variante:}
 \begin{figure}
@@ -426,14 +420,13 @@ funktionieren) wechseln kann.
 Zur Berechnung der Availability von diesem System wird hier ebenso ein Übergang von \enquote{dead} 
 zum Startzustand eingeführt. 
 Für die Berechnung der Verfügbarkeit wird definiert, dass das System noch
-lauffähig ist, wenn es sich in einem der blauen Zustände befindet. (siehe
+lauffähig ist, wenn es sich in einem der blauen Zustände befindet (siehe
 \Fref{fig:states_redundant_avail}).
 
 \paragraph{Kostenvergleich:}
 Um nun die Kosten der beiden Varianten zu vergleichen, muss von beiden Systemen
-die Availability berechnet werden. (\Fref{sec:res_avail}) Erst dann können die Ausfallskosten zu den
-laufenden Kosten in Relation gestellt und verglichen werden. (siehe
-\Fref{sec:cost_calc})
+die Availability berechnet werden (\Fref{sec:res_avail}). Erst dann können die Ausfallskosten zu den
+laufenden Kosten in Relation gestellt und verglichen werden (siehe \Fref{sec:cost_calc}).
 
 \section{Ergebnisse}
 
@@ -525,18 +518,17 @@ laufenden Kosten in Relation gestellt und verglichen werden. (siehe
 
 Die Ergebnisse der MTTF Simulation sind in \Fref{fig:mttf_result} dargestellt.
 Diese Ergebnisse wurden mit Hilfe der \emph{SHARPE}-Programme \Fref{sec:calc_mttf_simple},
-\Fref{sec:calc_mttf_redundant} und \Fref{sec:calc_mttf_redundant_rep} berechnet.
+\Fref{sec:calc_mttf_redundant_rep} und \Fref{sec:calc_mttf_redundant} berechnet.
 Für die genauen Werte, siehe \Fref{tab:mttf_result}.
 
 \subsection{Availability}\label{sec:res_avail}
 Die Availability $\alpha_s$ des einfachen Systems lässt sich als Zustandswahrscheinlichkeit der Markov Kette (siehe \Fref{fig:states_simple_avail_simply}) des Zustands \textbf{b} berechnen. Dies kann mit dem \emph{SHARPE} Befehl \mbox{\texttt{expr prob(SYS,1)}} bewerkstelligt werden. \\
-Mit den gegebenen Werte ergibt sich: $\alpha_s = \printpercent{\alphas}$\\
-Für die Programmsequenzen, die für die Berechnung von $\alpha_s$ verwendet
-wurden, siehe \Fref{sec:calc_aval_simple}.
+Mit den gegebenen Werten ergibt sich: $\alpha_s = \printpercent{\alphas}$ \\
 
-Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
+Die Availability $\alpha_r$ des fehlertoleranten Systems entspricht der Wahrscheinlichkeit, sich in einem der Zustände $\lbrace a, b, c, d \rbrace$ zu befinden (siehe \Fref{fig:states_redundant_avail}). Dies ist äquivalent mit der Zustandswahrscheinlichkeit nicht im Zustand \textbf{e} (System Ausfall) zu sein und kann mittels \mbox{\texttt{expr 1-prob(SYS,5)}} berechnet werden (Zustand 5 = Zustand e).\\
 In unserem Fall ergibt das: $\alpha_r = \printpercent{\alphar}$\\
-Für die \emph{SHARPE}-Programme siehe \Fref{sec:calc_aval_redundant}.\\
+
+Die \emph{SHARPE}-Programme für die Berechnung von $\alpha_s$ und $\alpha_r$ siehe \Fref{sec:calc_aval_simple} und \Fref{sec:calc_aval_redundant}.\\
 
 \section{Diskussion}
 \subsection{MTTF}
@@ -555,7 +547,7 @@ Wert reduziert sich allerdings im zweiten Jahr auf unter 2\%. \\
 Die redundante Variante mit Reparatur, ist selbst nach dem dritten Jahr noch mit über 75\%-iger Wahrscheinlichkeit im Betrieb. Erst nach über 5900 Tagen (entspricht 16 Jahren) steigt die Ausfallwahrscheinlichkeit über 80\%.
 \subsection{Kostenrechnung}\label{sec:cost_calc}
 Aus der Simulation mit \emph{SHARPE} können die beiden Availability Werte
-$\alpha_s$ (für das einfache System) und $\alpha_r$ für das Redundante System
+$\alpha_s$ für das einfache System und $\alpha_r$ für das redundante System
 ermittelt werden.\\
 Sei $\Omega$ die Betriebskosten des einfachen Systems, so lassen sich die Kosten beschreiben mit:
 \begin{equation}
@@ -564,12 +556,12 @@ C_s(k) = \Omega \cdot \alpha_s + (1-\alpha_s)\cdot \Omega \cdot k
 
 wobei $k \cdot \Omega$ die Ausfallkosten des Systems sind ($k \in
 \mathbb{N}^+$).\\$k$ stellt das Verhältnis zwischen Laufender Kosten und Ausfallkosten des einfachen Systems dar.\\
-Die Kosten des Redundanten Systems ergeben sich mit: 
+Die Kosten des redundanten Systems ergeben sich mit: 
 \begin{equation}
 C_r(k) = \Omega \cdot \printCostFactor \alpha_r + (1- \alpha_r) \cdot \Omega \cdot k
 \end{equation}
 
-Um das Verhältnis $k$ zu bestimmen, ab dem sich der Betrieb des Redundanten Systems auszahlt, muss der Schnittpunkt $k_x$ bestimmt werden:
+Um das Verhältnis $k$ zu bestimmen, ab dem sich der Betrieb des redundanten Systems auszahlt, muss der Schnittpunkt $k_x$ bestimmt werden:
 \begin{equation}
 \begin{split}
 C_s(k_x) = C_r(k_x) \\ &
@@ -623,7 +615,7 @@ Mit den beiden von \emph{SHARPE} berechneten Werten ergibt sich:
 \pgfkeys{/pgf/fpu=false}
 
 \section{Fazit}
-Wie in \Fref{sec:results_mttf} gesehen wurde, hebt sich das redundante System vom einfachen erst mit Reparatur stark vom einfachen System ab. Dies ist der im Verhältnis sehr hohen \emph{repair-rate} zu verdanken.
+Wie in \Fref{sec:results_mttf} gesehen wurde, hebt sich das redundante vom einfachen System erst mit zusätzlicher Reparatur stark von Ersterem ab. Dies ist der im Verhältnis sehr hohen \emph{repair-rate} zu verdanken.
 
 Um das Verhältnis der Ausfalls- und Betriebskosten zu veranschaulichen kann
 folgendes Zahlenbeispiel angenommen werden:\\
